@@ -5,54 +5,91 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="MacroKOL">
-<meta name="description" content="宏观经济情报站 · 加密 · 美股 · 全球市场">
-<title>MacroKOL · 宏观情报站</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%231a1814'/><text x='50%' y='60%' dominant-baseline='middle' text-anchor='middle' font-size='20' fill='%23c8692a'>M</text></svg>">
+<meta name="apple-mobile-web-app-title" content="MacroHub">
+<meta name="description" content="宏观经济情报站 · 加密 · 美股 · 全球市场 · X · 微博资源聚合">
+<title>MacroHub · 宏观情报站 v2</title>
+<!--
+  MacroHub v2 — 宏观情报站
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  GitHub 部署说明：
+  1. 上传本文件至 GitHub Pages 仓库根目录
+  2. 如需接入 AI 生成功能，在仓库 Secrets 配置 ANTHROPIC_API_KEY
+  3. 如需接入微博 API，配置 WEIBO_APP_KEY / WEIBO_APP_SECRET
+  4. 如需接入 X API，配置 TWITTER_BEARER_TOKEN
+  5. 建议配合 Cloudflare Workers 做 CORS 代理，可绕过 allorigins 限速
+  
+  数据源（免费 / 公开）：
+  - CoinGecko API v3 (加密货币行情)
+  - Alternative.me (恐贪指数)
+  - Stooq via proxy (美股/商品/外汇)
+  - RSS: CoinTelegraph / Decrypt / CryptoSlate / Reuters / WSJ /
+         FT / Bloomberg / 财联社 / 华尔街见闻 / Investing.com /
+         CoinDesk / The Block / Blockworks
+  - 微博热搜 (通过 RSS.app 订阅或官方 API)
+  - X/Twitter 达人 (通过 Twitter API v2 Bearer Token)
+
+  未来扩展 TODO:
+  - [ ] 接入 Glassnode on-chain 数据
+  - [ ] 接入 Deribit 期权数据（IV / 期权链）
+  - [ ] 微博真实 API 拉取财经话题
+  - [ ] X API v2 拉取达人最新推文
+  - [ ] 接入 TradingView Widget 走势图
+  - [ ] 接入 Telegram Bot 自动推送
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,400&family=Syne:wght@700;800&family=Noto+Serif+SC:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%231a1814'/><text x='50%' y='62%' dominant-baseline='middle' text-anchor='middle' font-size='18' font-weight='900' fill='%23e8843c'>M</text></svg>">
 <style>
-/* ═══════════════════════════════════════════
-   DESIGN TOKENS
-═══════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════
+   DESIGN TOKENS v2
+═══════════════════════════════════════════════════ */
 :root {
-  --bg:       #f4efe5;
-  --bg2:      #ede7da;
-  --bg3:      #e5dece;
-  --card:     #faf6ef;
-  --card2:    #fff8ef;
-  --border:   #d5cfc2;
-  --border2:  #c4bdb0;
-  --text:     #18160f;
-  --text2:    #47423a;
-  --text3:    #7c766d;
-  --text4:    #a09890;
-  --accent:   #b85e22;
-  --accent2:  #974d1a;
-  --accent3:  #e8843c;
-  --green:    #1f6b42;
-  --green2:   #d4edda;
-  --red:      #b82222;
-  --red2:     #fde8e8;
-  --blue:     #1a4f7a;
-  --blue2:    #e3eef8;
-  --gold:     #a07c10;
-  --gold2:    #fdf3d0;
-  --purple:   #5b3fa0;
-  --purple2:  #ede8fa;
-  --shadow:   0 1px 4px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.06);
-  --shadow2:  0 2px 8px rgba(0,0,0,0.08), 0 8px 32px rgba(0,0,0,0.08);
+  --bg:       #f3ede0;
+  --bg2:      #ece5d5;
+  --bg3:      #e2d9c6;
+  --card:     #faf5eb;
+  --card2:    #fff9f0;
+  --border:   #d4ccba;
+  --border2:  #c2b9a8;
+  --text:     #16140e;
+  --text2:    #42392e;
+  --text3:    #7a7060;
+  --text4:    #a09580;
+  --accent:   #c06020;
+  --accent2:  #9e4d16;
+  --accent3:  #f0904a;
+  --green:    #1a6438;
+  --green2:   #cce8d8;
+  --red:      #b01e1e;
+  --red2:     #fce6e6;
+  --blue:     #184e7a;
+  --blue2:    #daeaf8;
+  --gold:     #9c7808;
+  --gold2:    #fdf0c0;
+  --purple:   #5a3a98;
+  --purple2:  #ebe4fa;
+  --cyan:     #0e7090;
+  --cyan2:    #d8f0f8;
+  --shadow:   0 1px 3px rgba(0,0,0,0.05), 0 4px 14px rgba(0,0,0,0.07);
+  --shadow2:  0 2px 8px rgba(0,0,0,0.09), 0 10px 36px rgba(0,0,0,0.09);
   --radius:   10px;
   --radius2:  14px;
+  --font-display: 'Syne', 'Noto Serif SC', serif;
+  --font-mono: 'DM Mono', 'Courier New', monospace;
+  --font-body: 'Noto Serif SC', Verdana, Geneva, sans-serif;
 }
 
-/* ═══════════════════════════════════════════
+/* ═══════════════════════════════════════════════════
    RESET & BASE
-═══════════════════════════════════════════ */
+═══════════════════════════════════════════════════ */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
 body {
   background: var(--bg);
   color: var(--text);
-  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  font-family: var(--font-body);
   font-size: 14px;
   line-height: 1.65;
   min-height: 100vh;
@@ -61,13 +98,13 @@ body {
 a { color: var(--accent); text-decoration: none; }
 a:hover { text-decoration: underline; }
 button { font-family: inherit; cursor: pointer; }
-::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar { width: 4px; height: 4px; }
 ::-webkit-scrollbar-track { background: var(--bg2); }
 ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
 
-/* ═══════════════════════════════════════════
+/* ═══════════════════════════════════════════════════
    TOP NAV
-═══════════════════════════════════════════ */
+═══════════════════════════════════════════════════ */
 .topnav {
   background: var(--text);
   color: var(--bg);
@@ -79,56 +116,93 @@ button { font-family: inherit; cursor: pointer; }
   position: sticky;
   top: 0;
   z-index: 200;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.25);
+  box-shadow: 0 2px 14px rgba(0,0,0,0.3);
 }
 .nav-logo {
-  font-size: 17px;
-  font-weight: 700;
-  letter-spacing: 1.5px;
-  color: #f0e8d8;
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  color: #f0e8d6;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 9px;
   flex-shrink: 0;
 }
-.nav-logo-dot { color: var(--accent3); font-size: 22px; line-height: 1; }
+.nav-logo-badge {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  background: var(--accent);
+  color: #fff;
+  padding: 1px 6px;
+  border-radius: 3px;
+  vertical-align: middle;
+  margin-left: 4px;
+}
 .nav-ticker {
   flex: 1;
   overflow: hidden;
   margin: 0 20px;
   position: relative;
+  mask-image: linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%);
 }
 .ticker-inner {
   display: flex;
   gap: 28px;
   white-space: nowrap;
-  animation: ticker 40s linear infinite;
-  font-size: 12px;
-  color: #c8bfb0;
+  animation: ticker 48s linear infinite;
+  font-size: 11.5px;
+  color: #b8b0a0;
+  font-family: var(--font-mono);
 }
 .ticker-inner:hover { animation-play-state: paused; }
 @keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
 .ticker-item { display: flex; align-items: center; gap: 5px; flex-shrink: 0; }
-.ticker-sym { font-weight: 700; color: #e8dcc8; }
-.ticker-up { color: #6dd98a; }
-.ticker-dn { color: #ff8080; }
+.ticker-sym { font-weight: 500; color: #ddd4c0; }
+.ticker-up { color: #60d880; }
+.ticker-dn { color: #ff8880; }
+.ticker-neutral { color: #b8b0a0; }
 .nav-right { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
-.nav-time { font-size: 11px; color: #8a8070; letter-spacing: 0.3px; }
+.nav-time { font-size: 11px; color: #7a7060; letter-spacing: 0.3px; font-family: var(--font-mono); }
 .nav-btn {
-  background: rgba(255,255,255,0.1);
-  border: 1px solid rgba(255,255,255,0.15);
-  color: #e8dcc8;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.14);
+  color: #e8d8c0;
   padding: 5px 13px;
   border-radius: 5px;
   font-size: 12px;
   font-weight: 700;
-  transition: all 0.2s;
+  transition: all 0.18s;
 }
 .nav-btn:hover { background: var(--accent); border-color: var(--accent); color: #fff; }
+.nav-live-dot { width: 6px; height: 6px; border-radius: 50%; background: #4cd964; display: inline-block; margin-right: 4px; animation: live-pulse 1.8s ease-in-out infinite; }
+@keyframes live-pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(0.7)} }
 
-/* ═══════════════════════════════════════════
-   SECTION TABS (main nav below header)
-═══════════════════════════════════════════ */
+/* Malaysia clock */
+.nav-clock-wrap {
+  display: flex; align-items: center; gap: 7px;
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 7px;
+  padding: 5px 11px;
+}
+.nav-clock-flag { font-size: 16px; line-height: 1; }
+.nav-clock-info { display: flex; flex-direction: column; line-height: 1.2; }
+.nav-clock-time {
+  font-size: 13px; font-weight: 600;
+  color: #f0e8d6; letter-spacing: 0.5px;
+  font-family: var(--font-mono);
+}
+.nav-clock-label {
+  font-size: 9px; font-weight: 700; color: #7a6e5e;
+  letter-spacing: 0.6px; text-transform: uppercase;
+  font-family: var(--font-mono);
+}
+
+/* ═══════════════════════════════════════════════════
+   SECTION TABS
+═══════════════════════════════════════════════════ */
 .section-tabs {
   background: var(--bg2);
   border-bottom: 1px solid var(--border);
@@ -142,35 +216,33 @@ button { font-family: inherit; cursor: pointer; }
 .section-tabs::-webkit-scrollbar { display: none; }
 .stab {
   padding: 12px 18px;
-  font-size: 13px;
+  font-size: 12.5px;
   font-weight: 700;
   color: var(--text3);
   border-bottom: 3px solid transparent;
   white-space: nowrap;
   background: none;
-  border-top: none;
-  border-left: none;
-  border-right: none;
+  border-top: none; border-left: none; border-right: none;
   cursor: pointer;
-  transition: all 0.2s;
-  letter-spacing: 0.2px;
+  transition: all 0.18s;
+  letter-spacing: 0.3px;
 }
-.stab:hover { color: var(--text2); }
+.stab:hover { color: var(--text2); background: rgba(0,0,0,0.03); }
 .stab.active { color: var(--accent); border-bottom-color: var(--accent); }
 
-/* ═══════════════════════════════════════════
+/* ═══════════════════════════════════════════════════
    LAYOUT
-═══════════════════════════════════════════ */
+═══════════════════════════════════════════════════ */
 .page { display: none; }
 .page.active { display: block; }
-.wrap { max-width: 1380px; margin: 0 auto; padding: 20px 18px 40px; }
+.wrap { max-width: 1400px; margin: 0 auto; padding: 18px 18px 48px; }
 .grid-main { display: grid; grid-template-columns: 1fr 360px; gap: 18px; align-items: start; }
 .col-left { min-width: 0; }
-.col-right { position: sticky; top: 106px; }
+.col-right { position: sticky; top: 104px; }
 
-/* ═══════════════════════════════════════════
+/* ═══════════════════════════════════════════════════
    CARDS
-═══════════════════════════════════════════ */
+═══════════════════════════════════════════════════ */
 .card {
   background: var(--card);
   border: 1px solid var(--border);
@@ -188,47 +260,60 @@ button { font-family: inherit; cursor: pointer; }
   gap: 12px;
 }
 .card-title {
-  font-size: 14px;
+  font-size: 13.5px;
   font-weight: 700;
   color: var(--text);
   display: flex;
   align-items: center;
   gap: 7px;
+  font-family: var(--font-display);
 }
-.card-title-icon { font-size: 16px; }
+.card-title-icon { font-size: 15px; }
 .card-sub { font-size: 11px; color: var(--text4); margin-top: 2px; }
 .card-body { padding: 14px 18px; }
 
-/* ═══════════════════════════════════════════
+/* ═══════════════════════════════════════════════════
    BUTTONS
-═══════════════════════════════════════════ */
+═══════════════════════════════════════════════════ */
 .btn {
   display: inline-flex; align-items: center; gap: 5px;
   padding: 7px 16px;
   border: none; border-radius: 6px;
-  font-family: Verdana, sans-serif;
+  font-family: inherit;
   font-size: 12px; font-weight: 700;
   cursor: pointer; transition: all 0.18s;
   white-space: nowrap;
 }
 .btn-primary { background: var(--accent); color: #fff; }
-.btn-primary:hover { background: var(--accent2); transform: translateY(-1px); box-shadow: 0 3px 10px rgba(184,94,34,0.3); }
+.btn-primary:hover { background: var(--accent2); transform: translateY(-1px); box-shadow: 0 3px 12px rgba(192,96,32,0.35); }
 .btn-secondary { background: var(--bg3); color: var(--text2); border: 1px solid var(--border2); }
 .btn-secondary:hover { background: var(--border); }
 .btn-ghost { background: transparent; color: var(--accent); border: 1.5px solid var(--accent); }
 .btn-ghost:hover { background: var(--accent); color: #fff; }
+.btn-ai { background: linear-gradient(135deg, #5a3a98 0%, #8b5cf6 100%); color: #fff; }
+.btn-ai:hover { transform: translateY(-1px); box-shadow: 0 4px 14px rgba(90,58,152,0.4); }
 .btn-sm { padding: 5px 11px; font-size: 11px; }
-.btn-icon { padding: 6px 10px; }
 .btn-group { display: flex; gap: 7px; flex-wrap: wrap; }
 
-/* ═══════════════════════════════════════════
+/* ═══════════════════════════════════════════════════
+   AI BADGE
+═══════════════════════════════════════════════════ */
+.ai-badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 10px; font-weight: 700; letter-spacing: 0.8px;
+  background: var(--purple2); color: var(--purple);
+  padding: 2px 8px; border-radius: 3px;
+  border: 1px solid rgba(90,58,152,0.2);
+}
+
+/* ═══════════════════════════════════════════════════
    TOPIC CHIPS
-═══════════════════════════════════════════ */
+═══════════════════════════════════════════════════ */
 .chips { display: flex; gap: 8px; flex-wrap: wrap; padding: 12px 18px 14px; }
 .chip {
   padding: 5px 14px;
   border-radius: 50px;
-  font-size: 12px; font-weight: 700;
+  font-size: 11.5px; font-weight: 700;
   border: 1.5px solid var(--border2);
   background: var(--bg);
   color: var(--text2);
@@ -240,9 +325,9 @@ button { font-family: inherit; cursor: pointer; }
 .chip-all { background: var(--text); color: var(--bg); border-color: var(--text); }
 .chip-all.active, .chip-all:hover { background: var(--text2); color: #fff; border-color: var(--text2); }
 
-/* ═══════════════════════════════════════════
-   STAT TICKER ROW
-═══════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════
+   STAT CARDS
+═══════════════════════════════════════════════════ */
 .stat-row {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -255,17 +340,19 @@ button { font-family: inherit; cursor: pointer; }
   border-radius: var(--radius);
   padding: 12px 14px;
   box-shadow: var(--shadow);
+  transition: transform 0.15s, box-shadow 0.15s;
 }
-.stat-label { font-size: 10px; font-weight: 700; color: var(--text4); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 4px; }
-.stat-val { font-size: 20px; font-weight: 700; color: var(--text); line-height: 1.2; }
-.stat-sub { font-size: 11px; margin-top: 3px; font-weight: 700; }
+.stat-card:hover { transform: translateY(-2px); box-shadow: var(--shadow2); }
+.stat-label { font-size: 10px; font-weight: 700; color: var(--text4); text-transform: uppercase; letter-spacing: 0.9px; margin-bottom: 4px; font-family: var(--font-mono); }
+.stat-val { font-size: 20px; font-weight: 700; color: var(--text); line-height: 1.2; font-family: var(--font-mono); }
+.stat-sub { font-size: 11px; margin-top: 3px; font-weight: 700; font-family: var(--font-mono); }
 .stat-up { color: var(--green); }
 .stat-dn { color: var(--red); }
 .stat-neutral { color: var(--text3); }
 
-/* ═══════════════════════════════════════════
+/* ═══════════════════════════════════════════════════
    X POST GENERATOR
-═══════════════════════════════════════════ */
+═══════════════════════════════════════════════════ */
 .xpost-box {
   background: #fff;
   border: 2px solid var(--border2);
@@ -273,33 +360,43 @@ button { font-family: inherit; cursor: pointer; }
   padding: 14px 16px;
   min-height: 90px;
   font-size: 14px;
-  line-height: 1.75;
+  line-height: 1.8;
   color: var(--text);
   white-space: pre-wrap;
   word-break: break-word;
   outline: none;
   transition: border-color 0.2s;
 }
-.xpost-box:focus { border-color: var(--accent); }
+.xpost-box:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(192,96,32,0.1); }
 .xpost-box.empty { color: var(--text4); font-style: italic; }
 .xpost-meta {
   display: flex; justify-content: space-between; align-items: center;
-  margin-top: 8px; padding-top: 8px;
+  margin-top: 9px; padding-top: 9px;
   border-top: 1px solid var(--bg3);
 }
-.char-count { font-size: 12px; font-weight: 700; color: var(--text3); }
+.char-count { font-size: 12px; font-weight: 700; color: var(--text3); font-family: var(--font-mono); }
 .char-count.ok { color: var(--green); }
 .char-count.warn { color: var(--gold); }
 .char-count.over { color: var(--red); }
+.platform-tabs { display: flex; gap: 6px; margin-bottom: 10px; }
+.ptab {
+  padding: 5px 14px; border-radius: 5px;
+  font-size: 11px; font-weight: 700;
+  background: var(--bg2); border: 1px solid var(--border);
+  color: var(--text3); cursor: pointer; transition: all 0.15s;
+  display: flex; align-items: center; gap: 4px;
+}
+.ptab.active { background: var(--text); color: var(--bg); border-color: var(--text); }
+.ptab:hover:not(.active) { background: var(--bg3); }
 .xpost-loading {
   display: none; align-items: center; gap: 8px;
-  color: var(--text3); font-size: 13px; padding: 20px 0;
+  color: var(--text3); font-size: 13px; padding: 16px 0;
 }
 .xpost-loading.show { display: flex; }
 
-/* ═══════════════════════════════════════════
+/* ═══════════════════════════════════════════════════
    ANALYSIS BLOCKS
-═══════════════════════════════════════════ */
+═══════════════════════════════════════════════════ */
 .analysis-section { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .analysis-block {
   background: var(--card2);
@@ -313,20 +410,23 @@ button { font-family: inherit; cursor: pointer; }
 .analysis-block.red-border { border-left-color: var(--red); }
 .analysis-block.blue-border { border-left-color: var(--blue); }
 .analysis-block.gold-border { border-left-color: var(--gold); }
+.analysis-block.cyan-border { border-left-color: var(--cyan); }
 .a-label {
   font-size: 10px; font-weight: 700;
   text-transform: uppercase; letter-spacing: 1px;
   color: var(--accent); margin-bottom: 5px;
+  font-family: var(--font-mono);
 }
 .a-label.green { color: var(--green); }
 .a-label.red { color: var(--red); }
 .a-label.blue { color: var(--blue); }
 .a-label.gold { color: var(--gold); }
-.a-text { font-size: 13px; line-height: 1.7; color: var(--text2); }
+.a-label.cyan { color: var(--cyan); }
+.a-text { font-size: 13px; line-height: 1.72; color: var(--text2); }
 
-/* ═══════════════════════════════════════════
+/* ═══════════════════════════════════════════════════
    NEWS FEED
-═══════════════════════════════════════════ */
+═══════════════════════════════════════════════════ */
 .news-tabs {
   display: flex; gap: 4px; padding: 10px 18px 0;
   overflow-x: auto; scrollbar-width: none;
@@ -335,7 +435,7 @@ button { font-family: inherit; cursor: pointer; }
 .ntab {
   padding: 5px 13px;
   border-radius: 5px;
-  font-size: 12px; font-weight: 700;
+  font-size: 11.5px; font-weight: 700;
   background: var(--bg2);
   border: 1px solid var(--border);
   color: var(--text3);
@@ -345,29 +445,31 @@ button { font-family: inherit; cursor: pointer; }
 }
 .ntab:hover { background: var(--bg3); color: var(--text2); }
 .ntab.active { background: var(--text); color: var(--bg); border-color: var(--text); }
-.news-list { padding: 6px 0; }
+.news-list { padding: 4px 0; }
 .news-item {
-  display: flex; gap: 12px; align-items: flex-start;
+  display: flex; gap: 11px; align-items: flex-start;
   padding: 11px 18px;
   border-bottom: 1px solid var(--bg3);
-  transition: background 0.15s;
+  transition: background 0.12s;
 }
 .news-item:hover { background: var(--bg2); }
 .news-item:last-child { border-bottom: none; }
 .news-badge {
-  flex-shrink: 0; font-size: 10px; font-weight: 700;
+  flex-shrink: 0; font-size: 9.5px; font-weight: 700;
   padding: 2px 7px; border-radius: 3px; margin-top: 2px;
-  letter-spacing: 0.3px;
+  letter-spacing: 0.3px; font-family: var(--font-mono);
 }
-.b-crypto { background: #fff3e0; color: #bf360c; }
-.b-macro  { background: #e8f5e9; color: #1b5e20; }
-.b-stock  { background: #e3f2fd; color: #0d47a1; }
-.b-geo    { background: #fce4ec; color: #880e4f; }
-.b-fx     { background: #f3e5f5; color: #4a148c; }
+.b-crypto  { background: #fff3e0; color: #b03000; }
+.b-macro   { background: #e8f5e9; color: #1b5e20; }
+.b-stock   { background: #e3f2fd; color: #0d47a1; }
+.b-geo     { background: #fce4ec; color: #880e4f; }
+.b-fx      { background: #f3e5f5; color: #4a148c; }
+.b-chain   { background: #e0f7fa; color: #006064; }
+.b-cn      { background: #fff8e1; color: #827717; }
 .news-content { flex: 1; min-width: 0; }
 .news-title {
-  font-size: 13px; font-weight: 700;
-  color: var(--text); line-height: 1.45;
+  font-size: 13px; font-weight: 600;
+  color: var(--text); line-height: 1.48;
   margin-bottom: 3px;
   display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
   overflow: hidden;
@@ -378,13 +480,65 @@ button { font-family: inherit; cursor: pointer; }
   display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
   overflow: hidden;
 }
-.news-foot { display: flex; gap: 8px; align-items: center; margin-top: 4px; }
-.news-src { font-size: 11px; font-weight: 700; color: var(--blue); }
-.news-time { font-size: 11px; color: var(--text4); }
+.news-foot { display: flex; gap: 8px; align-items: center; margin-top: 4px; flex-wrap: wrap; }
+.news-src { font-size: 10.5px; font-weight: 700; color: var(--blue); font-family: var(--font-mono); }
+.news-time { font-size: 10.5px; color: var(--text4); font-family: var(--font-mono); }
+.news-hot { font-size: 10px; color: var(--red); font-weight: 700; }
 
-/* ═══════════════════════════════════════════
+/* ═══════════════════════════════════════════════════
+   达人面板 (X + 微博)
+═══════════════════════════════════════════════════ */
+.kol-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 4px 0; }
+.kol-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 10px 12px;
+  display: flex; align-items: flex-start; gap: 10px;
+  transition: background 0.12s, box-shadow 0.15s;
+}
+.kol-card:hover { background: var(--bg3); box-shadow: var(--shadow); }
+.kol-avatar {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: var(--accent);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; font-weight: 800; color: #fff;
+  flex-shrink: 0; font-family: var(--font-display);
+}
+.kol-info { flex: 1; min-width: 0; }
+.kol-name { font-size: 12px; font-weight: 700; color: var(--text); line-height: 1.3; }
+.kol-handle { font-size: 10.5px; color: var(--text4); font-family: var(--font-mono); }
+.kol-desc { font-size: 11px; color: var(--text3); margin-top: 3px; line-height: 1.45; }
+.kol-platform { font-size: 9px; font-weight: 700; padding: 1px 6px; border-radius: 3px; }
+.kol-x { background: #000; color: #fff; }
+.kol-weibo { background: #e6162d; color: #fff; }
+.kol-tg { background: #0088cc; color: #fff; }
+.kol-yt { background: #ff0000; color: #fff; }
+
+/* SOCIAL LINKS */
+.social-row { display: flex; gap: 8px; flex-wrap: wrap; padding: 4px 0; }
+.social-btn {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 7px 14px; border-radius: 6px;
+  font-size: 12px; font-weight: 700;
+  border: 1.5px solid var(--border2);
+  background: var(--card); color: var(--text2);
+  cursor: pointer; transition: all 0.15s;
+  text-decoration: none;
+}
+.social-btn:hover { transform: translateY(-1px); box-shadow: var(--shadow); text-decoration: none; }
+.sb-x { border-color: #000; color: #000; }
+.sb-x:hover { background: #000; color: #fff; }
+.sb-weibo { border-color: #e6162d; color: #e6162d; }
+.sb-weibo:hover { background: #e6162d; color: #fff; }
+.sb-tg { border-color: #0088cc; color: #0088cc; }
+.sb-tg:hover { background: #0088cc; color: #fff; }
+.sb-yt { border-color: #ff0000; color: #ff0000; }
+.sb-yt:hover { background: #ff0000; color: #fff; }
+
+/* ═══════════════════════════════════════════════════
    COLLAPSIBLE PRICE PANELS
-═══════════════════════════════════════════ */
+═══════════════════════════════════════════════════ */
 .cpanel {
   border: 1px solid var(--border);
   border-radius: var(--radius);
@@ -393,14 +547,14 @@ button { font-family: inherit; cursor: pointer; }
 }
 .cpanel-head {
   background: var(--bg2);
-  padding: 11px 16px;
+  padding: 10px 14px;
   display: flex; align-items: center; justify-content: space-between;
   cursor: pointer; user-select: none;
-  transition: background 0.15s;
+  transition: background 0.12s;
 }
 .cpanel-head:hover { background: var(--bg3); }
-.cpanel-title { font-size: 13px; font-weight: 700; color: var(--text); display: flex; align-items: center; gap: 7px; }
-.cpanel-arrow { font-size: 12px; color: var(--text4); transition: transform 0.2s; }
+.cpanel-title { font-size: 12.5px; font-weight: 700; color: var(--text); display: flex; align-items: center; gap: 7px; font-family: var(--font-display); }
+.cpanel-arrow { font-size: 11px; color: var(--text4); transition: transform 0.2s; }
 .cpanel-arrow.open { transform: rotate(180deg); }
 .cpanel-body { display: none; background: var(--card); }
 .cpanel-body.open { display: block; }
@@ -413,72 +567,72 @@ button { font-family: inherit; cursor: pointer; }
   padding: 7px 12px; text-align: left;
   border-bottom: 1px solid var(--border);
   background: var(--bg2);
+  font-family: var(--font-mono);
 }
 .ptable td { padding: 9px 12px; font-size: 13px; border-bottom: 1px solid var(--bg3); vertical-align: middle; }
 .ptable tr:last-child td { border-bottom: none; }
 .ptable tr:hover td { background: var(--bg2); }
-.p-sym { font-weight: 700; font-size: 13px; }
-.p-name { font-size: 11px; color: var(--text4); }
-.p-price { font-weight: 700; font-size: 14px; font-variant-numeric: tabular-nums; }
-.p-chg { font-size: 11px; font-weight: 700; padding: 2px 6px; border-radius: 3px; }
+.p-sym { font-weight: 700; font-size: 13px; font-family: var(--font-mono); }
+.p-name { font-size: 10.5px; color: var(--text4); }
+.p-price { font-weight: 700; font-size: 13.5px; font-variant-numeric: tabular-nums; font-family: var(--font-mono); }
+.p-chg { font-size: 11px; font-weight: 700; padding: 2px 6px; border-radius: 3px; font-family: var(--font-mono); }
 .p-up { background: var(--green2); color: var(--green); }
 .p-dn { background: var(--red2); color: var(--red); }
-.p-mc { font-size: 11px; color: var(--text4); }
+.p-mc { font-size: 11px; color: var(--text4); font-family: var(--font-mono); }
 
-/* ═══════════════════════════════════════════
+/* ═══════════════════════════════════════════════════
    HEATMAP
-═══════════════════════════════════════════ */
+═══════════════════════════════════════════════════ */
 .heatmap { display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px; padding: 12px; }
 .hm-cell {
-  border-radius: 6px; padding: 8px 4px;
+  border-radius: 7px; padding: 8px 4px;
   text-align: center; cursor: default;
-  transition: transform 0.15s, box-shadow 0.15s;
+  transition: transform 0.14s, box-shadow 0.14s;
 }
-.hm-cell:hover { transform: scale(1.07); box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
-.hm-sym { font-size: 10px; font-weight: 700; opacity: 0.9; }
-.hm-pct { font-size: 12px; font-weight: 700; margin-top: 2px; }
+.hm-cell:hover { transform: scale(1.08); box-shadow: 0 3px 10px rgba(0,0,0,0.2); }
+.hm-sym { font-size: 10px; font-weight: 700; opacity: 0.9; font-family: var(--font-mono); }
+.hm-pct { font-size: 12px; font-weight: 700; margin-top: 2px; font-family: var(--font-mono); }
 
-/* ═══════════════════════════════════════════
+/* ═══════════════════════════════════════════════════
    FEAR & GREED
-═══════════════════════════════════════════ */
+═══════════════════════════════════════════════════ */
 .fg-wrap { padding: 14px; }
-.fg-num { font-size: 48px; font-weight: 700; text-align: center; line-height: 1; }
-.fg-label { font-size: 14px; font-weight: 700; text-align: center; margin: 4px 0 12px; }
+.fg-num { font-size: 52px; font-weight: 800; text-align: center; line-height: 1; font-family: var(--font-display); }
+.fg-label { font-size: 14px; font-weight: 700; text-align: center; margin: 4px 0 14px; }
 .fg-bar-bg { background: linear-gradient(to right, #c0392b, #e67e22, #f1c40f, #27ae60, #16a085); border-radius: 6px; height: 10px; position: relative; }
 .fg-bar-marker { position: absolute; top: -3px; width: 16px; height: 16px; background: var(--text); border-radius: 50%; transform: translateX(-50%); border: 2px solid var(--card); }
-.fg-range { display: flex; justify-content: space-between; font-size: 10px; color: var(--text4); margin-top: 4px; }
+.fg-range { display: flex; justify-content: space-between; font-size: 10px; color: var(--text4); margin-top: 4px; font-family: var(--font-mono); }
 
-/* ═══════════════════════════════════════════
-   MORNING BRIEF / REPORT
-═══════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════
+   REPORT
+═══════════════════════════════════════════════════ */
 .report-page { padding: 20px 0; }
 .report-header {
   background: var(--text);
   color: var(--bg);
   border-radius: var(--radius2);
-  padding: 24px 28px;
+  padding: 26px 30px;
   margin-bottom: 16px;
   position: relative;
   overflow: hidden;
 }
 .report-header::before {
   content: '';
-  position: absolute; top: 0; right: 0; bottom: 0;
-  width: 200px;
-  background: linear-gradient(135deg, transparent, rgba(200,105,42,0.15));
+  position: absolute; top: 0; right: 0; bottom: 0; width: 220px;
+  background: linear-gradient(135deg, transparent, rgba(192,96,32,0.18));
 }
-.report-edition { font-size: 11px; font-weight: 700; color: var(--accent3); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 6px; }
-.report-headline { font-size: 22px; font-weight: 700; color: #f0e8d8; line-height: 1.3; margin-bottom: 8px; }
-.report-dateline { font-size: 12px; color: #8a7a68; }
-.report-divider { height: 2px; background: linear-gradient(to right, var(--accent), transparent); margin: 16px 0; }
+.report-edition { font-size: 10px; font-weight: 700; color: var(--accent3); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 7px; font-family: var(--font-mono); }
+.report-headline { font-size: 22px; font-weight: 800; color: #f0e8d6; line-height: 1.3; margin-bottom: 8px; font-family: var(--font-display); }
+.report-dateline { font-size: 11.5px; color: #8a7a68; font-family: var(--font-mono); }
 .report-section-title {
-  font-size: 11px; font-weight: 700;
-  text-transform: uppercase; letter-spacing: 1.2px;
+  font-size: 10.5px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 1.3px;
   color: var(--accent); margin-bottom: 10px;
   padding-bottom: 5px;
   border-bottom: 1px solid var(--border);
+  font-family: var(--font-mono);
 }
-.report-body { font-size: 14px; line-height: 1.8; color: var(--text2); }
+.report-body { font-size: 14px; line-height: 1.82; color: var(--text2); }
 .report-body p { margin-bottom: 10px; }
 .report-body strong { color: var(--text); }
 .report-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
@@ -489,56 +643,81 @@ button { font-family: inherit; cursor: pointer; }
   border-radius: var(--radius);
   padding: 12px 14px;
 }
-.report-mini-label { font-size: 10px; color: var(--text4); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
-.report-mini-val { font-size: 16px; font-weight: 700; color: var(--text); }
-.report-mini-chg { font-size: 12px; font-weight: 700; }
+.report-mini-label { font-size: 10px; color: var(--text4); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; font-family: var(--font-mono); }
+.report-mini-val { font-size: 16px; font-weight: 700; color: var(--text); font-family: var(--font-mono); }
+.report-mini-chg { font-size: 12px; font-weight: 700; font-family: var(--font-mono); }
 .report-bullets { list-style: none; }
 .report-bullets li {
-  padding: 6px 0 6px 16px;
+  padding: 7px 0 7px 18px;
   border-bottom: 1px solid var(--bg3);
-  font-size: 13px;
-  line-height: 1.6;
-  color: var(--text2);
+  font-size: 13px; line-height: 1.62; color: var(--text2);
   position: relative;
 }
 .report-bullets li::before {
-  content: '▸';
-  position: absolute; left: 0;
-  color: var(--accent);
-  font-size: 10px;
-  top: 9px;
+  content: '▸'; position: absolute; left: 0;
+  color: var(--accent); font-size: 10px; top: 10px;
 }
 .report-bullets li:last-child { border-bottom: none; }
 
-/* PRINT STYLES */
+/* ═══════════════════════════════════════════════════
+   CALENDAR / EVENTS
+═══════════════════════════════════════════════════ */
+.event-item {
+  display: flex; gap: 12px; align-items: flex-start;
+  padding: 10px 18px; border-bottom: 1px solid var(--bg3);
+  transition: background 0.12s;
+}
+.event-item:hover { background: var(--bg2); }
+.event-date {
+  flex-shrink: 0; width: 44px; text-align: center;
+  background: var(--accent); color: #fff;
+  border-radius: 6px; padding: 4px 6px;
+  font-size: 11px; font-weight: 700;
+  font-family: var(--font-mono);
+}
+.event-date .day { font-size: 18px; display: block; line-height: 1.1; font-family: var(--font-display); }
+.event-info { flex: 1; }
+.event-title { font-size: 13px; font-weight: 700; color: var(--text); line-height: 1.4; }
+.event-desc { font-size: 11.5px; color: var(--text3); margin-top: 2px; }
+.event-impact {
+  font-size: 9.5px; font-weight: 700; padding: 1px 6px; border-radius: 3px;
+  font-family: var(--font-mono);
+}
+.imp-high { background: var(--red2); color: var(--red); }
+.imp-med  { background: var(--gold2); color: var(--gold); }
+.imp-low  { background: var(--green2); color: var(--green); }
+
+/* ═══════════════════════════════════════════════════
+   PRINT
+═══════════════════════════════════════════════════ */
 @media print {
   .topnav, .section-tabs, .btn, .chips, .news-tabs { display: none !important; }
   .card { box-shadow: none; border: 1px solid #ccc; }
   body { background: white; }
 }
 
-/* ═══════════════════════════════════════════
-   LOADING STATES
-═══════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════
+   LOADING / SPINNER
+═══════════════════════════════════════════════════ */
 .spinner {
-  display: inline-block; width: 16px; height: 16px;
+  display: inline-block; width: 15px; height: 15px;
   border: 2px solid var(--border2);
   border-top-color: var(--accent);
   border-radius: 50%;
-  animation: spin 0.65s linear infinite;
+  animation: spin 0.6s linear infinite;
   flex-shrink: 0;
 }
 @keyframes spin { to { transform: rotate(360deg); } }
 .loading-row {
   display: flex; align-items: center; gap: 8px;
-  padding: 20px; color: var(--text3); font-size: 13px;
+  padding: 18px; color: var(--text3); font-size: 13px;
 }
-.skeleton { background: linear-gradient(90deg, var(--bg2) 25%, var(--bg3) 50%, var(--bg2) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 4px; }
+.skeleton { background: linear-gradient(90deg, var(--bg2) 25%, var(--bg3) 50%, var(--bg2) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 4px; height: 14px; }
 @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
 
-/* ═══════════════════════════════════════════
+/* ═══════════════════════════════════════════════════
    STATUS BAR
-═══════════════════════════════════════════ */
+═══════════════════════════════════════════════════ */
 .status-bar {
   background: var(--bg2);
   border: 1px solid var(--border);
@@ -548,44 +727,52 @@ button { font-family: inherit; cursor: pointer; }
   font-size: 11px; color: var(--text3);
   margin-bottom: 14px;
   flex-wrap: wrap;
+  font-family: var(--font-mono);
 }
 .status-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); flex-shrink: 0; animation: pulse 2s ease-in-out infinite; }
-@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.35} }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
 .status-sep { color: var(--border2); }
 
-/* ═══════════════════════════════════════════
-   MARKET OVERVIEW TABLE
-═══════════════════════════════════════════ */
-.market-overview { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-
-/* ═══════════════════════════════════════════
+/* ═══════════════════════════════════════════════════
    TOAST
-═══════════════════════════════════════════ */
+═══════════════════════════════════════════════════ */
 .toast {
   position: fixed; bottom: 24px; right: 24px;
-  background: var(--text); color: #f0e8d8;
+  background: var(--text); color: #f0e8d6;
   padding: 11px 20px; border-radius: 8px;
   font-size: 13px; font-weight: 700;
   opacity: 0; transform: translateY(16px);
-  transition: all 0.28s; z-index: 999; pointer-events: none;
+  transition: all 0.26s; z-index: 999; pointer-events: none;
   box-shadow: var(--shadow2);
 }
 .toast.show { opacity: 1; transform: translateY(0); }
 
-/* ═══════════════════════════════════════════
-   EMPTY & ERROR STATES
-═══════════════════════════════════════════ */
-.empty-state { text-align: center; padding: 32px 20px; color: var(--text4); }
-.empty-icon { font-size: 32px; margin-bottom: 8px; }
+/* ═══════════════════════════════════════════════════
+   EMPTY STATE
+═══════════════════════════════════════════════════ */
+.empty-state { text-align: center; padding: 30px 20px; color: var(--text4); }
+.empty-icon { font-size: 30px; margin-bottom: 8px; }
 .empty-text { font-size: 13px; }
 
-/* ═══════════════════════════════════════════
-   MOBILE / iOS
-═══════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════
+   SECTION DIVIDER
+═══════════════════════════════════════════════════ */
+.section-label {
+  font-size: 10px; font-weight: 700; letter-spacing: 1.5px;
+  color: var(--text4); text-transform: uppercase;
+  padding: 6px 18px 4px; font-family: var(--font-mono);
+  border-bottom: 1px solid var(--bg3);
+}
+
+/* ═══════════════════════════════════════════════════
+   MOBILE
+═══════════════════════════════════════════════════ */
 @media (max-width: 768px) {
   .topnav { padding: 0 14px; height: 48px; }
   .nav-ticker { display: none; }
-  .nav-time { display: none; }
+  .nav-clock-label { display: none; }
+  .nav-clock-wrap { padding: 4px 8px; gap: 5px; }
+  .nav-clock-time { font-size: 11px; }
   .wrap { padding: 12px 12px 60px; }
   .grid-main { grid-template-columns: 1fr; }
   .col-right { position: static; }
@@ -593,18 +780,77 @@ button { font-family: inherit; cursor: pointer; }
   .analysis-section { grid-template-columns: 1fr; }
   .analysis-block.full { grid-column: 1; }
   .section-tabs { padding: 0 12px; }
-  .stab { padding: 11px 14px; font-size: 12px; }
+  .stab { padding: 11px 13px; font-size: 12px; }
   .report-grid { grid-template-columns: 1fr; }
   .report-grid-3 { grid-template-columns: 1fr 1fr; }
   .heatmap { grid-template-columns: repeat(4, 1fr); }
-  .market-overview { grid-template-columns: 1fr; }
+  .kol-grid { grid-template-columns: 1fr; }
   .nav-btn span { display: none; }
 }
 @media (max-width: 420px) {
   .stat-row { grid-template-columns: 1fr 1fr; }
   .heatmap { grid-template-columns: repeat(3, 1fr); }
+  .report-grid-3 { grid-template-columns: 1fr; }
 }
-/* iOS safe area */
+/* ═══════════════════════════════════════════════════
+   EMOJI PICKER
+═══════════════════════════════════════════════════ */
+.emoji-picker-wrap {
+  position: relative; display: inline-block;
+}
+.emoji-picker-btn {
+  background: var(--bg2); border: 1.5px solid var(--border2);
+  border-radius: 6px; padding: 5px 10px;
+  font-size: 16px; cursor: pointer;
+  transition: all 0.15s; line-height: 1;
+  display: flex; align-items: center; gap: 4px;
+}
+.emoji-picker-btn:hover { background: var(--bg3); border-color: var(--accent); }
+.emoji-picker-btn .ep-label { font-size: 11px; font-weight: 700; color: var(--text3); font-family: var(--font-mono); }
+.emoji-panel {
+  position: absolute; bottom: calc(100% + 8px); left: 0;
+  background: var(--card);
+  border: 1.5px solid var(--border2);
+  border-radius: var(--radius2);
+  box-shadow: var(--shadow2);
+  z-index: 300;
+  width: 300px;
+  display: none;
+  overflow: hidden;
+}
+.emoji-panel.open { display: block; }
+.emoji-panel-tabs {
+  display: flex; background: var(--bg2);
+  border-bottom: 1px solid var(--border);
+  overflow-x: auto; scrollbar-width: none;
+}
+.emoji-panel-tabs::-webkit-scrollbar { display: none; }
+.ep-tab {
+  padding: 7px 11px; font-size: 13px;
+  border: none; background: none; cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.12s; white-space: nowrap;
+  flex-shrink: 0;
+}
+.ep-tab.active { border-bottom-color: var(--accent); }
+.ep-tab:hover { background: var(--bg3); }
+.emoji-grid {
+  display: grid; grid-template-columns: repeat(8, 1fr);
+  gap: 2px; padding: 8px; max-height: 200px; overflow-y: auto;
+}
+.ep-emoji {
+  font-size: 20px; padding: 5px; border-radius: 5px;
+  cursor: pointer; text-align: center; line-height: 1;
+  transition: background 0.1s;
+  border: none; background: none;
+}
+.ep-emoji:hover { background: var(--bg3); transform: scale(1.2); }
+.ep-search {
+  width: 100%; padding: 8px 12px;
+  border: none; border-bottom: 1px solid var(--border);
+  background: var(--bg2); font-size: 12px; color: var(--text);
+  font-family: var(--font-mono); outline: none;
+}
 @supports (padding: env(safe-area-inset-bottom)) {
   .wrap { padding-bottom: calc(40px + env(safe-area-inset-bottom)); }
 }
@@ -615,29 +861,38 @@ button { font-family: inherit; cursor: pointer; }
 <!-- ═══ TOP NAV ═══ -->
 <nav class="topnav">
   <div class="nav-logo">
-    <span class="nav-logo-dot">◆</span> MACRO<span style="color:var(--accent3)">KOL</span>
+    <span style="color:var(--accent3)">◆</span> MACRO<span style="color:var(--accent3)">HUB</span>
+    <span class="nav-logo-badge">v2</span>
   </div>
   <div class="nav-ticker">
     <div class="ticker-inner" id="tickerInner">
-      <span class="ticker-item"><span class="ticker-sym">BTC</span> <span id="tk-btc">--</span></span>
-      <span class="ticker-item"><span class="ticker-sym">ETH</span> <span id="tk-eth">--</span></span>
-      <span class="ticker-item"><span class="ticker-sym">SOL</span> <span id="tk-sol">--</span></span>
+      <span class="ticker-item"><span class="ticker-sym">BTC</span> <span id="tk-btc" class="ticker-neutral">--</span></span>
+      <span class="ticker-item"><span class="ticker-sym">ETH</span> <span id="tk-eth" class="ticker-neutral">--</span></span>
+      <span class="ticker-item"><span class="ticker-sym">SOL</span> <span id="tk-sol" class="ticker-neutral">--</span></span>
       <span class="ticker-item"><span class="ticker-sym">SPX</span> <span id="tk-spx" class="ticker-neutral">--</span></span>
+      <span class="ticker-item"><span class="ticker-sym">NDX</span> <span id="tk-ndx" class="ticker-neutral">--</span></span>
       <span class="ticker-item"><span class="ticker-sym">GOLD</span> <span id="tk-gold" class="ticker-neutral">--</span></span>
-      <span class="ticker-item"><span class="ticker-sym">OIL</span> <span id="tk-oil" class="ticker-neutral">--</span></span>
+      <span class="ticker-item"><span class="ticker-sym">WTI</span> <span id="tk-oil" class="ticker-neutral">--</span></span>
       <span class="ticker-item"><span class="ticker-sym">DXY</span> <span id="tk-dxy" class="ticker-neutral">--</span></span>
-      <!-- duplicate for seamless loop -->
-      <span class="ticker-item"><span class="ticker-sym">BTC</span> <span id="tk-btc2">--</span></span>
-      <span class="ticker-item"><span class="ticker-sym">ETH</span> <span id="tk-eth2">--</span></span>
-      <span class="ticker-item"><span class="ticker-sym">SOL</span> <span id="tk-sol2">--</span></span>
+      <!-- duplicate for seamless scroll -->
+      <span class="ticker-item"><span class="ticker-sym">BTC</span> <span id="tk-btc2" class="ticker-neutral">--</span></span>
+      <span class="ticker-item"><span class="ticker-sym">ETH</span> <span id="tk-eth2" class="ticker-neutral">--</span></span>
+      <span class="ticker-item"><span class="ticker-sym">SOL</span> <span id="tk-sol2" class="ticker-neutral">--</span></span>
       <span class="ticker-item"><span class="ticker-sym">SPX</span> <span id="tk-spx2" class="ticker-neutral">--</span></span>
+      <span class="ticker-item"><span class="ticker-sym">NDX</span> <span id="tk-ndx2" class="ticker-neutral">--</span></span>
       <span class="ticker-item"><span class="ticker-sym">GOLD</span> <span id="tk-gold2" class="ticker-neutral">--</span></span>
-      <span class="ticker-item"><span class="ticker-sym">OIL</span> <span id="tk-oil2" class="ticker-neutral">--</span></span>
+      <span class="ticker-item"><span class="ticker-sym">WTI</span> <span id="tk-oil2" class="ticker-neutral">--</span></span>
       <span class="ticker-item"><span class="ticker-sym">DXY</span> <span id="tk-dxy2" class="ticker-neutral">--</span></span>
     </div>
   </div>
   <div class="nav-right">
-    <span class="nav-time" id="navTime"></span>
+    <div class="nav-clock-wrap">
+      <span class="nav-clock-flag">🇲🇾</span>
+      <div class="nav-clock-info">
+        <span class="nav-clock-time" id="navTimeMY">--:--:--</span>
+        <span class="nav-clock-label">MYT (UTC+8)</span>
+      </div>
+    </div>
     <button class="nav-btn" onclick="refreshAll()">⟳ <span>刷新</span></button>
   </div>
 </nav>
@@ -647,7 +902,9 @@ button { font-family: inherit; cursor: pointer; }
   <button class="stab active" onclick="showPage('dashboard', this)">📊 总览</button>
   <button class="stab" onclick="showPage('news', this)">📰 资讯</button>
   <button class="stab" onclick="showPage('markets', this)">💹 行情</button>
-  <button class="stab" onclick="showPage('xpost', this)">𝕏 投稿</button>
+  <button class="stab" onclick="showPage('xpost', this)">✍️ 投稿</button>
+  <button class="stab" onclick="showPage('kol', this)">🌟 达人资源</button>
+  <button class="stab" onclick="showPage('calendar', this)">🗓 日历</button>
   <button class="stab" onclick="showPage('report', this)">📋 日报</button>
 </div>
 
@@ -657,17 +914,29 @@ button { font-family: inherit; cursor: pointer; }
 <div id="page-dashboard" class="page active">
 <div class="wrap">
 
-  <!-- Status -->
+  <!-- Status Bar -->
   <div class="status-bar">
     <div class="status-dot"></div>
     <span id="statusText">正在加载数据...</span>
     <span class="status-sep">·</span>
     <span id="lastUpdate">--</span>
+    <span class="status-sep">·</span>
+    <span id="newsCountStatus">--</span>
+  </div>
+
+  <!-- QUICK STATS (6 items) -->
+  <div class="stat-row" style="grid-template-columns:repeat(6,1fr)">
+    <div class="stat-card"><div class="stat-label">BTC</div><div class="stat-val" id="qs-btc">--</div><div class="stat-sub" id="qs-btc-chg">—</div></div>
+    <div class="stat-card"><div class="stat-label">ETH</div><div class="stat-val" id="qs-eth">--</div><div class="stat-sub" id="qs-eth-chg">—</div></div>
+    <div class="stat-card"><div class="stat-label">SOL</div><div class="stat-val" id="qs-sol">--</div><div class="stat-sub" id="qs-sol-chg">—</div></div>
+    <div class="stat-card"><div class="stat-label">恐贪指数</div><div class="stat-val" id="qs-fg">--</div><div class="stat-sub" id="qs-fg-label">—</div></div>
+    <div class="stat-card"><div class="stat-label">市场情绪</div><div class="stat-val" id="qs-sentiment">--</div><div class="stat-sub" id="qs-market-trend">—</div></div>
+    <div class="stat-card"><div class="stat-label">新闻条数</div><div class="stat-val" id="qs-news">--</div><div class="stat-sub" id="qs-news-sub">来源数</div></div>
   </div>
 
   <!-- TOPIC CHIPS -->
   <div class="card" style="margin-bottom:16px">
-    <div style="padding:12px 18px 4px">
+    <div style="padding:11px 18px 4px">
       <div class="card-title"><span class="card-title-icon">🎯</span> 分析焦点</div>
     </div>
     <div class="chips">
@@ -677,60 +946,67 @@ button { font-family: inherit; cursor: pointer; }
       <div class="chip" data-topic="macro" onclick="selectTopic(this)">🏛 宏观</div>
       <div class="chip" data-topic="geo" onclick="selectTopic(this)">🌍 地缘</div>
       <div class="chip" data-topic="fx" onclick="selectTopic(this)">💱 外汇商品</div>
+      <div class="chip" data-topic="cn" onclick="selectTopic(this)">🇨🇳 中国财经</div>
     </div>
   </div>
 
-  <!-- QUICK STATS -->
-  <div class="stat-row" id="quickStats">
-    <div class="stat-card"><div class="stat-label">BTC</div><div class="stat-val" id="qs-btc">--</div><div class="stat-sub" id="qs-btc-chg">—</div></div>
-    <div class="stat-card"><div class="stat-label">ETH</div><div class="stat-val" id="qs-eth">--</div><div class="stat-sub" id="qs-eth-chg">—</div></div>
-    <div class="stat-card"><div class="stat-label">恐贪指数</div><div class="stat-val" id="qs-fg">--</div><div class="stat-sub" id="qs-fg-label">—</div></div>
-    <div class="stat-card"><div class="stat-label">市场情绪</div><div class="stat-val" id="qs-sentiment">--</div><div class="stat-sub" id="qs-market-trend">—</div></div>
-  </div>
-
   <div class="grid-main">
-    <!-- LEFT -->
+    <!-- LEFT COL -->
     <div class="col-left">
 
-      <!-- X POST CARD -->
+      <!-- X + 微博 POST GENERATOR -->
       <div class="card">
         <div class="card-head">
           <div>
-            <div class="card-title"><span class="card-title-icon">𝕏</span> X 投稿生成</div>
-            <div class="card-sub">100字以内 · 专业分析风格 · 随时生成</div>
+            <div class="card-title"><span class="card-title-icon">✍️</span> 智能投稿生成</div>
+            <div class="card-sub">基于实时行情 · 支持 X / 微博 / Telegram</div>
           </div>
           <div class="btn-group">
             <button class="btn btn-secondary btn-sm" onclick="generatePost()">🔄 换一条</button>
-            <button class="btn btn-primary btn-sm" onclick="generatePost()">⚡ 生成</button>
+            <button class="btn btn-ai btn-sm" onclick="generatePostAI()">✨ AI生成</button>
           </div>
         </div>
-        <div class="card-body">
+        <div class="card-body" style="padding-top:10px">
+          <!-- Platform Tabs -->
+          <div class="platform-tabs">
+            <button class="ptab active" data-plat="x" onclick="switchPlatform(this)">𝕏 X / Twitter</button>
+            <button class="ptab" data-plat="weibo" onclick="switchPlatform(this)">🔴 微博</button>
+            <button class="ptab" data-plat="tg" onclick="switchPlatform(this)">✈️ Telegram</button>
+            <button class="ptab" data-plat="long" onclick="switchPlatform(this)">📝 长文</button>
+          </div>
           <div class="xpost-loading" id="postLoading"><div class="spinner"></div> 正在生成分析...</div>
           <div id="postArea">
-            <div class="xpost-box empty" id="xpostText" contenteditable="true" onclick="clearPlaceholder(this)">点击「生成」按钮，根据最新行情自动生成 X 投稿，可手动编辑。</div>
+            <div class="xpost-box empty" id="xpostText" contenteditable="true" onclick="clearPlaceholder(this)">点击「AI生成」或「换一条」按钮，根据最新行情自动生成投稿内容。</div>
             <div class="xpost-meta">
-              <span class="char-count" id="charCount">— / 100 字</span>
+              <span class="char-count" id="charCount">— / 字</span>
               <div class="btn-group">
+                <div class="emoji-picker-wrap">
+                  <button class="emoji-picker-btn" onclick="toggleEmojiPanel('ep1','xpostText')" title="插入 Emoji">😊 <span class="ep-label">Emoji</span></button>
+                  <div class="emoji-panel" id="ep1"></div>
+                </div>
                 <button class="btn btn-secondary btn-sm" onclick="copyPost()">📋 复制</button>
-                <button class="btn btn-ghost btn-sm" onclick="showPage('xpost', document.querySelector(\`.stab:nth-child(4)\`))">更多选项 →</button>
+                <button class="btn btn-ghost btn-sm" id="openSocialBtn" onclick="openSocialDraft()">→ 去发布</button>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- ANALYSIS CARD -->
+      <!-- ANALYSIS -->
       <div class="card">
         <div class="card-head">
           <div>
             <div class="card-title"><span class="card-title-icon">🧠</span> 深度分析</div>
             <div class="card-sub" id="analysisSub">基于实时资讯与行情数据</div>
           </div>
-          <button class="btn btn-secondary btn-sm" onclick="generateAnalysis()">⟳ 更新</button>
+          <div class="btn-group">
+            <button class="btn btn-secondary btn-sm" onclick="generateAnalysis()">⟳ 刷新</button>
+            <button class="btn btn-ai btn-sm" onclick="generateAnalysisAI()">✨ AI增强</button>
+          </div>
         </div>
         <div class="card-body">
           <div id="analysisContent">
-            <div class="empty-state"><div class="empty-icon">🔍</div><div class="empty-text">点击「生成」或「更新」获取深度分析</div></div>
+            <div class="empty-state"><div class="empty-icon">🔍</div><div class="empty-text">点击「刷新」或「AI增强」获取深度分析</div></div>
           </div>
         </div>
       </div>
@@ -753,6 +1029,7 @@ button { font-family: inherit; cursor: pointer; }
           <button class="ntab" onclick="filterDashNews(this,'macro')">宏观</button>
           <button class="ntab" onclick="filterDashNews(this,'us-stock')">美股</button>
           <button class="ntab" onclick="filterDashNews(this,'geo')">地缘</button>
+          <button class="ntab" onclick="filterDashNews(this,'cn')">中国财经</button>
         </div>
         <div class="loading-row" id="newsLoadingDash"><div class="spinner"></div> 正在获取资讯...</div>
         <div class="news-list" id="dashNewsList"></div>
@@ -767,9 +1044,9 @@ button { font-family: inherit; cursor: pointer; }
       <div class="cpanel">
         <div class="cpanel-head" onclick="togglePanel('cpCrypto','arCrypto')">
           <div class="cpanel-title">₿ 加密货币</div>
-          <span id="arCrypto" class="cpanel-arrow">▼</span>
+          <span id="arCrypto" class="cpanel-arrow open">▼</span>
         </div>
-        <div id="cpCrypto" class="cpanel-body">
+        <div id="cpCrypto" class="cpanel-body open">
           <div class="loading-row" id="cryptoLoadingRow"><div class="spinner"></div> 加载中...</div>
           <table class="ptable" id="cryptoTable" style="display:none"></table>
         </div>
@@ -779,23 +1056,22 @@ button { font-family: inherit; cursor: pointer; }
       <div class="cpanel">
         <div class="cpanel-head" onclick="togglePanel('cpFG','arFG')">
           <div class="cpanel-title">😨 恐贪指数</div>
-          <span id="arFG" class="cpanel-arrow">▼</span>
+          <span id="arFG" class="cpanel-arrow open">▼</span>
         </div>
-        <div id="cpFG" class="cpanel-body">
+        <div id="cpFG" class="cpanel-body open">
           <div class="loading-row" id="fgLoadingRow"><div class="spinner"></div> 加载中...</div>
           <div id="fgContent"></div>
         </div>
       </div>
 
-      <!-- CRYPTO HEATMAP -->
+      <!-- HEATMAP -->
       <div class="cpanel">
         <div class="cpanel-head" onclick="togglePanel('cpHeat','arHeat')">
           <div class="cpanel-title">🔥 热力图</div>
           <span id="arHeat" class="cpanel-arrow">▼</span>
         </div>
         <div id="cpHeat" class="cpanel-body">
-          <div class="loading-row" id="heatLoadingRow"><div class="spinner"></div> 加载中...</div>
-          <div id="heatmapGrid" style="display:none" class="heatmap"></div>
+          <div id="heatmapGrid" style="padding:12px"><div class="loading-row"><div class="spinner"></div></div></div>
         </div>
       </div>
 
@@ -803,11 +1079,11 @@ button { font-family: inherit; cursor: pointer; }
       <div class="cpanel">
         <div class="cpanel-head" onclick="togglePanel('cpStocks','arStocks')">
           <div class="cpanel-title">📊 美股指数</div>
-          <span id="arStocks" class="cpanel-arrow">▼</span>
+          <span id="arStocks" class="cpanel-arrow open">▼</span>
         </div>
-        <div id="cpStocks" class="cpanel-body">
+        <div id="cpStocks" class="cpanel-body open">
           <div class="loading-row" id="stockLoadingRow"><div class="spinner"></div> 加载中...</div>
-          <table class="ptable" id="stockTable" style="display:none"></table>
+          <div id="stockWrapInner"></div>
         </div>
       </div>
 
@@ -815,11 +1091,22 @@ button { font-family: inherit; cursor: pointer; }
       <div class="cpanel">
         <div class="cpanel-head" onclick="togglePanel('cpComm','arComm')">
           <div class="cpanel-title">🛢 商品 / 外汇</div>
-          <span id="arComm" class="cpanel-arrow">▼</span>
+          <span id="arComm" class="cpanel-arrow open">▼</span>
         </div>
-        <div id="cpComm" class="cpanel-body">
+        <div id="cpComm" class="cpanel-body open">
           <div class="loading-row" id="commLoadingRow"><div class="spinner"></div> 加载中...</div>
-          <table class="ptable" id="commTable" style="display:none"></table>
+          <div id="commWrapInner"></div>
+        </div>
+      </div>
+
+      <!-- UPCOMING EVENTS mini -->
+      <div class="cpanel">
+        <div class="cpanel-head" onclick="togglePanel('cpEvents','arEvents')">
+          <div class="cpanel-title">🗓 本周重要事件</div>
+          <span id="arEvents" class="cpanel-arrow open">▼</span>
+        </div>
+        <div id="cpEvents" class="cpanel-body open">
+          <div id="miniEventsWrap"></div>
         </div>
       </div>
 
@@ -837,17 +1124,29 @@ button { font-family: inherit; cursor: pointer; }
     <div class="card-head">
       <div>
         <div class="card-title"><span class="card-title-icon">📰</span> 全球资讯流</div>
-        <div class="card-sub" id="newsFullSub">来源：CoinTelegraph · Reuters · Decrypt · Investing.com</div>
+        <div class="card-sub" id="newsFullSub">多源聚合 · 实时刷新</div>
       </div>
-      <button class="btn btn-secondary btn-sm" onclick="fetchNews()">⟳ 刷新</button>
+      <div class="btn-group">
+        <button class="btn btn-secondary btn-sm" onclick="fetchNews()">⟳ 刷新</button>
+        <button class="btn btn-ai btn-sm" onclick="summarizeNews()">✨ AI摘要</button>
+      </div>
     </div>
-    <div class="news-tabs">
+    <div class="news-tabs" id="fullNewsTabs">
       <button class="ntab active" onclick="filterFullNews(this,'all')">全部</button>
       <button class="ntab" onclick="filterFullNews(this,'crypto')">₿ 加密</button>
       <button class="ntab" onclick="filterFullNews(this,'macro')">🏛 宏观</button>
       <button class="ntab" onclick="filterFullNews(this,'us-stock')">📈 美股</button>
       <button class="ntab" onclick="filterFullNews(this,'geo')">🌍 地缘</button>
       <button class="ntab" onclick="filterFullNews(this,'fx')">💱 外汇</button>
+      <button class="ntab" onclick="filterFullNews(this,'chain')">⛓ 链上</button>
+      <button class="ntab" onclick="filterFullNews(this,'cn')">🇨🇳 中文</button>
+    </div>
+    <div id="aiSummaryBox" style="display:none;padding:14px 18px;background:var(--purple2);border-bottom:1px solid var(--border)">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+        <span class="ai-badge">✨ AI摘要</span>
+        <span style="font-size:11px;color:var(--text4);font-family:var(--font-mono)" id="aiSummaryTime"></span>
+      </div>
+      <div id="aiSummaryText" style="font-size:13px;line-height:1.78;color:var(--text2)"></div>
     </div>
     <div class="news-list" id="fullNewsList">
       <div class="loading-row"><div class="spinner"></div> 正在获取资讯...</div>
@@ -861,21 +1160,19 @@ button { font-family: inherit; cursor: pointer; }
 ══════════════════════════════════════════ -->
 <div id="page-markets" class="page">
 <div class="wrap">
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px" class="market-overview">
-    <!-- Full Crypto Table -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px" class="market-grid">
+    <!-- Crypto full table -->
     <div class="card">
       <div class="card-head">
         <div class="card-title"><span class="card-title-icon">₿</span> 加密货币市场</div>
         <button class="btn btn-secondary btn-sm" onclick="fetchCrypto()">⟳</button>
       </div>
-      <div id="marketsCryptoWrap">
-        <div class="loading-row"><div class="spinner"></div> 加载中...</div>
-      </div>
+      <div id="marketsCryptoWrap"><div class="loading-row"><div class="spinner"></div> 加载中...</div></div>
     </div>
     <!-- Right col -->
     <div>
       <div class="card">
-        <div class="card-head"><div class="card-title"><span class="card-title-icon">📊</span> 美股</div></div>
+        <div class="card-head"><div class="card-title"><span class="card-title-icon">📊</span> 美股指数</div><button class="btn btn-secondary btn-sm" onclick="fetchStocks()">⟳</button></div>
         <div id="marketsStockWrap"><div class="loading-row"><div class="spinner"></div> 加载中...</div></div>
       </div>
       <div class="card">
@@ -884,7 +1181,7 @@ button { font-family: inherit; cursor: pointer; }
       </div>
     </div>
   </div>
-  <!-- Heatmap full -->
+  <!-- Heatmap -->
   <div class="card">
     <div class="card-head">
       <div class="card-title"><span class="card-title-icon">🔥</span> 加密市场热力图</div>
@@ -908,11 +1205,21 @@ button { font-family: inherit; cursor: pointer; }
   <div class="card">
     <div class="card-head">
       <div>
-        <div class="card-title"><span class="card-title-icon">𝕏</span> X 投稿生成器</div>
-        <div class="card-sub">100字以内 · 专业分析 · 非AI腔调</div>
+        <div class="card-title"><span class="card-title-icon">✍️</span> 多平台投稿生成器</div>
+        <div class="card-sub">X · 微博 · Telegram · 长文 · 专业分析风格</div>
+      </div>
+      <div class="btn-group">
+        <span class="ai-badge">✨ AI驱动</span>
       </div>
     </div>
-    <!-- Topic select -->
+    <!-- Platform tabs -->
+    <div class="chips" style="border-bottom:1px solid var(--bg3);padding-bottom:12px">
+      <div class="chip chip-all active" data-plat="x" onclick="selectPlatFull(this)">𝕏 X (100字)</div>
+      <div class="chip" data-plat="weibo" onclick="selectPlatFull(this)">🔴 微博 (140字)</div>
+      <div class="chip" data-plat="tg" onclick="selectPlatFull(this)">✈️ Telegram</div>
+      <div class="chip" data-plat="long" onclick="selectPlatFull(this)">📝 长文观点</div>
+    </div>
+    <!-- Topic -->
     <div class="chips">
       <div class="chip chip-all active" data-topic="all" onclick="selectTopicX(this)">🌐 全领域</div>
       <div class="chip" data-topic="crypto" onclick="selectTopicX(this)">₿ 加密</div>
@@ -920,25 +1227,161 @@ button { font-family: inherit; cursor: pointer; }
       <div class="chip" data-topic="macro" onclick="selectTopicX(this)">🏛 宏观</div>
       <div class="chip" data-topic="geo" onclick="selectTopicX(this)">🌍 地缘</div>
       <div class="chip" data-topic="fx" onclick="selectTopicX(this)">💱 外汇</div>
+      <div class="chip" data-topic="cn" onclick="selectTopicX(this)">🇨🇳 中国</div>
     </div>
     <div class="card-body">
       <div class="xpost-loading" id="postLoading2"><div class="spinner"></div> 正在生成...</div>
       <div id="postArea2">
-        <div class="xpost-box" id="xpostText2" contenteditable="true">点击「生成」按钮获取投稿内容。</div>
+        <div class="xpost-box" id="xpostText2" contenteditable="true">点击「AI生成」按钮获取专业投稿内容。</div>
         <div class="xpost-meta">
-          <span class="char-count" id="charCount2">— / 100</span>
+          <span class="char-count" id="charCount2">— / 字</span>
           <div class="btn-group">
+            <div class="emoji-picker-wrap">
+              <button class="emoji-picker-btn" onclick="toggleEmojiPanel('ep2','xpostText2')" title="插入 Emoji">😊 <span class="ep-label">Emoji</span></button>
+              <div class="emoji-panel" id="ep2"></div>
+            </div>
             <button class="btn btn-secondary" onclick="generatePostFull()">🔄 换一条</button>
-            <button class="btn btn-primary" onclick="generatePostFull()">⚡ 生成</button>
+            <button class="btn btn-ai" onclick="generatePostFullAI()">✨ AI生成</button>
             <button class="btn btn-ghost" onclick="copyPost2()">📋 复制</button>
+            <button class="btn btn-primary" id="openSocialBtn2" onclick="openSocialDraftFull()">→ 去发布</button>
           </div>
         </div>
       </div>
+
+      <!-- 发布入口 -->
+      <div style="margin-top:16px;padding:14px;background:var(--bg2);border-radius:var(--radius);border:1px solid var(--border)">
+        <div style="font-size:12px;font-weight:700;color:var(--text3);margin-bottom:10px;font-family:var(--font-mono);text-transform:uppercase;letter-spacing:0.8px">🚀 快速发布入口</div>
+        <div class="social-row">
+          <a href="https://x.com/compose/post" target="_blank" rel="noopener" class="social-btn sb-x">𝕏 发布至 X</a>
+          <a href="https://weibo.com/compose" target="_blank" rel="noopener" class="social-btn sb-weibo">🔴 发布至微博</a>
+          <a href="https://t.me" target="_blank" rel="noopener" class="social-btn sb-tg">✈️ Telegram</a>
+        </div>
+        <div style="font-size:11px;color:var(--text4);margin-top:8px">提示：复制内容后点击发布链接，粘贴即可发布。</div>
+      </div>
+
+      <!-- 风格参考 -->
       <div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--bg3)">
-        <div class="card-title" style="margin-bottom:10px;font-size:13px">📌 投稿风格参考</div>
+        <div class="card-title" style="font-size:12px;margin-bottom:10px">📌 投稿风格参考</div>
         <div id="xStyleExamples"></div>
       </div>
     </div>
+  </div>
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     PAGE: 达人资源
+══════════════════════════════════════════ -->
+<div id="page-kol" class="page">
+<div class="wrap">
+
+  <!-- X 达人 -->
+  <div class="card">
+    <div class="card-head">
+      <div>
+        <div class="card-title"><span class="card-title-icon">𝕏</span> X / Twitter 精选达人</div>
+        <div class="card-sub">宏观 · 加密 · 美股 · 必关注列表</div>
+      </div>
+    </div>
+    <div class="section-label">加密货币 / Crypto</div>
+    <div class="card-body" style="padding-top:10px">
+      <div class="kol-grid" id="kolCryptoX"></div>
+    </div>
+    <div class="section-label">宏观经济 / Macro</div>
+    <div class="card-body" style="padding-top:10px">
+      <div class="kol-grid" id="kolMacroX"></div>
+    </div>
+    <div class="section-label">美股 / US Stocks</div>
+    <div class="card-body" style="padding-top:10px">
+      <div class="kol-grid" id="kolStockX"></div>
+    </div>
+  </div>
+
+  <!-- 微博达人 -->
+  <div class="card">
+    <div class="card-head">
+      <div>
+        <div class="card-title"><span style="color:#e6162d">🔴</span> 微博精选财经达人</div>
+        <div class="card-sub">中文财经 · 加密 · A股 · 宏观</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="kol-grid" id="kolWeibo"></div>
+    </div>
+  </div>
+
+  <!-- Telegram Channels -->
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title"><span style="color:#0088cc">✈️</span> 精选 Telegram 频道</div>
+    </div>
+    <div class="card-body">
+      <div class="kol-grid" id="kolTelegram"></div>
+    </div>
+  </div>
+
+  <!-- 权威数据源 -->
+  <div class="card">
+    <div class="card-head">
+      <div class="card-title"><span>📡</span> 权威数据 & 研究资源</div>
+    </div>
+    <div class="card-body">
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px" id="dataSourceGrid"></div>
+    </div>
+  </div>
+
+  <!-- GitHub 部署说明 -->
+  <div class="card" style="border-color:var(--purple);border-left:3px solid var(--purple)">
+    <div class="card-head">
+      <div class="card-title"><span>🐙</span> GitHub 部署 & 数据扩展</div>
+    </div>
+    <div class="card-body">
+      <div style="font-size:13px;line-height:1.85;color:var(--text2)">
+        <p>本工具已为 GitHub Pages 部署优化。上线后可通过以下方式扩展数据能力：</p>
+        <div style="margin-top:12px;display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div style="background:var(--bg2);border-radius:var(--radius);padding:12px;border:1px solid var(--border)">
+            <div style="font-size:11px;font-weight:700;color:var(--purple);font-family:var(--font-mono);margin-bottom:6px">🤖 AI 内容生成</div>
+            <div style="font-size:12px;color:var(--text3);line-height:1.65">配置 Anthropic API Key，启用真正的 AI 生成（Claude Sonnet）。在 GitHub Secrets 设置 <code>ANTHROPIC_API_KEY</code>，或通过 Cloudflare Worker 转发。</div>
+          </div>
+          <div style="background:var(--bg2);border-radius:var(--radius);padding:12px;border:1px solid var(--border)">
+            <div style="font-size:11px;font-weight:700;color:#e6162d;font-family:var(--font-mono);margin-bottom:6px">🔴 微博实时数据</div>
+            <div style="font-size:12px;color:var(--text3);line-height:1.65">申请微博开放平台 App Key，配合后端接口拉取财经热搜、达人动态。或使用 RSS.app 订阅微博 RSS。</div>
+          </div>
+          <div style="background:var(--bg2);border-radius:var(--radius);padding:12px;border:1px solid var(--border)">
+            <div style="font-size:11px;font-weight:700;color:#000;font-family:var(--font-mono);margin-bottom:6px">𝕏 X API 接入</div>
+            <div style="font-size:12px;color:var(--text3);line-height:1.65">配置 X API v2 Bearer Token，通过 Cloudflare Worker 做 CORS 代理，实时拉取达人推文流。</div>
+          </div>
+          <div style="background:var(--bg2);border-radius:var(--radius);padding:12px;border:1px solid var(--border)">
+            <div style="font-size:11px;font-weight:700;color:var(--cyan);font-family:var(--font-mono);margin-bottom:6px">⛓ 链上数据</div>
+            <div style="font-size:12px;color:var(--text3);line-height:1.65">接入 Glassnode / Dune Analytics API，获取 BTC 链上资金流、交易所净流量、矿工持仓等专业指标。</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     PAGE: ECONOMIC CALENDAR
+══════════════════════════════════════════ -->
+<div id="page-calendar" class="page">
+<div class="wrap">
+  <div class="card">
+    <div class="card-head">
+      <div>
+        <div class="card-title"><span class="card-title-icon">🗓</span> 经济日历</div>
+        <div class="card-sub" id="calSub">近期重要经济事件 · 影响评级</div>
+      </div>
+      <div class="btn-group">
+        <button class="btn btn-secondary btn-sm" onclick="filterCal('all',this)">全部</button>
+        <button class="btn btn-secondary btn-sm" onclick="filterCal('high',this)">🔴 高影响</button>
+        <button class="btn btn-secondary btn-sm" onclick="filterCal('med',this)">🟡 中影响</button>
+        <button class="btn btn-secondary btn-sm" onclick="filterCal('crypto',this)">₿ 加密</button>
+      </div>
+    </div>
+    <div id="calendarList"></div>
   </div>
 </div>
 </div>
@@ -949,16 +1392,19 @@ button { font-family: inherit; cursor: pointer; }
 <div id="page-report" class="page">
 <div class="wrap">
   <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap">
-    <button class="btn btn-primary" onclick="generateMorningBrief()">🌅 生成早餐日报</button>
-    <button class="btn btn-secondary" onclick="generateNowReport()">⚡ 生成即时报告</button>
-    <button class="btn btn-ghost" onclick="printReport()">🖨 打印 / 保存PDF</button>
+    <button class="btn btn-primary" onclick="generateMorningBrief()">🌅 早餐日报</button>
+    <button class="btn btn-secondary" onclick="generateNowReport()">⚡ 即时快报</button>
+    <button class="btn btn-ai" onclick="generateAIReport()">✨ AI深度报告</button>
+    <button class="btn btn-ghost" onclick="printReport()">🖨 打印/PDF</button>
   </div>
   <div id="reportContent">
     <div class="card">
       <div class="card-body">
         <div class="empty-state">
           <div class="empty-icon">📋</div>
-          <div class="empty-text">点击「早餐日报」获取今日市场早报<br>点击「即时报告」生成当前时刻市场总结</div>
+          <div class="empty-text">选择报告类型生成今日市场情报<br><br>
+            <span style="font-size:12px;color:var(--text4)">「AI深度报告」需配置 Anthropic API Key</span>
+          </div>
         </div>
       </div>
     </div>
@@ -974,10 +1420,40 @@ button { font-family: inherit; cursor: pointer; }
 ════════════════════════════════════════ -->
 <script>
 'use strict';
-// ── SECURITY: Content Security helpers ──
+
+// ══════════════════════════════════════════
+// CONFIGURATION
+// 在 GitHub 部署时，将 API Key 放入环境变量
+// 或通过 Cloudflare Worker 代理处理
+// ══════════════════════════════════════════
+const CONFIG = {
+  // AI 功能配置
+  // 部署到 GitHub 后，通过 Cloudflare Worker 或自建后端传入
+  ANTHROPIC_API_KEY: '',  // 留空则使用本地规则引擎
+  AI_MODEL: 'claude-sonnet-4-20250514',
+  
+  // 代理设置（推荐使用 Cloudflare Worker）
+  PROXY_URL: 'https://api.allorigins.win/raw?url=',
+  
+  // 刷新间隔
+  CRYPTO_INTERVAL: 2 * 60 * 1000,   // 2分钟
+  NEWS_INTERVAL: 8 * 60 * 1000,     // 8分钟
+  
+  // 平台字符限制
+  PLATFORM_LIMITS: {
+    x: 100,
+    weibo: 140,
+    tg: 300,
+    long: 800,
+  }
+};
+
+// ══════════════════════════════════════════
+// SECURITY HELPERS
+// ══════════════════════════════════════════
 function sanitizeHTML(str) {
   const div = document.createElement('div');
-  div.appendChild(document.createTextNode(str));
+  div.appendChild(document.createTextNode(String(str||'')));
   return div.innerHTML;
 }
 function sanitizeURL(url) {
@@ -987,42 +1463,57 @@ function sanitizeURL(url) {
   } catch { return '#'; }
 }
 
-// ── STATE ──
+// ══════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════
 let currentTopic = 'all';
 let currentTopicX = 'all';
+let currentPlatform = 'x';
+let currentPlatformFull = 'x';
 let cryptoData = [];
 let allNewsItems = [];
 let fearGreedValue = null;
 let _postVariant = 0;
 let _dataLoaded = false;
+let calendarData = [];
 
-// ── UTILS ──
-function showToast(msg, dur=2500) {
+// ══════════════════════════════════════════
+// UTILS
+// ══════════════════════════════════════════
+function showToast(msg, dur=2600) {
   const t = document.getElementById('toast');
   t.textContent = msg;
   t.classList.add('show');
   clearTimeout(t._timer);
   t._timer = setTimeout(() => t.classList.remove('show'), dur);
 }
+
 function updateNavTime() {
-  const n = new Date();
-  document.getElementById('navTime').textContent =
-    n.toLocaleDateString('zh-CN',{month:'2-digit',day:'2-digit'}) + ' ' +
-    n.toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  // Malaysia Time = UTC+8
+  const now = new Date();
+  const myTime = new Date(now.toLocaleString('en-US', {timeZone: 'Asia/Kuala_Lumpur'}));
+  const hh = myTime.getHours().toString().padStart(2,'0');
+  const mm = myTime.getMinutes().toString().padStart(2,'0');
+  const ss = myTime.getSeconds().toString().padStart(2,'0');
+  const el = document.getElementById('navTimeMY');
+  if (el) el.textContent = `${hh}:${mm}:${ss}`;
+  // Also keep a hidden id for any legacy references
+  const old = document.getElementById('navTime');
+  if (old) old.textContent = `${hh}:${mm}`;
 }
 setInterval(updateNavTime, 1000); updateNavTime();
 
 function formatP(p) {
   if (p >= 10000) return p.toLocaleString('en-US',{maximumFractionDigits:0});
-  if (p >= 1000) return p.toLocaleString('en-US',{maximumFractionDigits:1});
-  if (p >= 1) return p.toFixed(2);
+  if (p >= 1000)  return p.toLocaleString('en-US',{maximumFractionDigits:1});
+  if (p >= 1)     return p.toFixed(2);
   return p.toFixed(4);
 }
 function formatMC(v) {
   if (!v) return '--';
   if (v >= 1e12) return '$'+(v/1e12).toFixed(2)+'T';
-  if (v >= 1e9) return '$'+(v/1e9).toFixed(1)+'B';
-  if (v >= 1e6) return '$'+(v/1e6).toFixed(0)+'M';
+  if (v >= 1e9)  return '$'+(v/1e9).toFixed(1)+'B';
+  if (v >= 1e6)  return '$'+(v/1e6).toFixed(0)+'M';
   return '$'+v;
 }
 function chgBadge(pct) {
@@ -1031,16 +1522,32 @@ function chgBadge(pct) {
   return `<span class="p-chg ${c}">${s}${pct.toFixed(2)}%</span>`;
 }
 function chgCls(pct) { return pct >= 0 ? 'stat-up' : 'stat-dn'; }
+function timeAgo(dateStr) {
+  if (!dateStr) return '';
+  const d = new Date(dateStr);
+  if (isNaN(d)) return '';
+  const diff = Date.now() - d;
+  if (diff < 60000) return '刚刚';
+  if (diff < 3600000) return Math.floor(diff/60000) + '分钟前';
+  if (diff < 86400000) return Math.floor(diff/3600000) + '小时前';
+  return d.toLocaleDateString('zh-CN',{month:'2-digit',day:'2-digit'});
+}
 
-// ── PAGE NAV ──
+// ══════════════════════════════════════════
+// PAGE NAV
+// ══════════════════════════════════════════
 function showPage(id, tabEl) {
+  // Close any open emoji panels
+  document.querySelectorAll('.emoji-panel.open').forEach(p => { p.classList.remove('open'); p.innerHTML = ''; });
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.stab').forEach(t => t.classList.remove('active'));
   document.getElementById('page-'+id).classList.add('active');
   if (tabEl) tabEl.classList.add('active');
+  // Lazy render
+  if (id === 'kol') renderKOLPage();
+  if (id === 'calendar') renderCalendar();
 }
 
-// ── PANEL TOGGLE ──
 function togglePanel(bodyId, arrowId) {
   const b = document.getElementById(bodyId);
   const a = document.getElementById(arrowId);
@@ -1048,11 +1555,11 @@ function togglePanel(bodyId, arrowId) {
   a.classList.toggle('open');
 }
 
-// ── TOPIC SELECT ──
+// ══════════════════════════════════════════
+// TOPIC / PLATFORM SELECT
+// ══════════════════════════════════════════
 function selectTopic(el) {
-  document.querySelectorAll('.chip[data-topic]').forEach(c => {
-    if (c.closest('#page-dashboard')) c.classList.remove('active');
-  });
+  document.querySelectorAll('#page-dashboard .chip[data-topic]').forEach(c => c.classList.remove('active'));
   el.classList.add('active');
   currentTopic = el.dataset.topic;
 }
@@ -1061,15 +1568,56 @@ function selectTopicX(el) {
   el.classList.add('active');
   currentTopicX = el.dataset.topic;
 }
+function switchPlatform(el) {
+  document.querySelectorAll('#page-dashboard .ptab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  currentPlatform = el.dataset.plat;
+  updateCharCount('xpostText','charCount');
+  updateOpenBtn();
+}
+function selectPlatFull(el) {
+  document.querySelectorAll('#page-xpost .chip[data-plat]').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  currentPlatformFull = el.dataset.plat;
+  updateCharCount('xpostText2','charCount2');
+}
+function updateOpenBtn() {
+  const labels = {x:'→ 发布至 X', weibo:'→ 发布至微博', tg:'→ 发布至TG', long:'📝 复制长文'};
+  const btn = document.getElementById('openSocialBtn');
+  if (btn) btn.textContent = labels[currentPlatform] || '→ 去发布';
+}
+function openSocialDraft() {
+  const t = document.getElementById('xpostText').textContent.trim();
+  if (t && t.length > 3) navigator.clipboard.writeText(t).then(() => showToast('✅ 内容已复制'));
+  const urls = {x:'https://x.com/compose/post', weibo:'https://weibo.com/compose', tg:'https://t.me'};
+  const url = urls[currentPlatform];
+  if (url) window.open(url, '_blank');
+}
+function openSocialDraftFull() {
+  const t = document.getElementById('xpostText2').textContent.trim();
+  if (t && t.length > 3) navigator.clipboard.writeText(t).then(() => showToast('✅ 内容已复制'));
+  const urls = {x:'https://x.com/compose/post', weibo:'https://weibo.com/compose', tg:'https://t.me', long:'#'};
+  const url = urls[currentPlatformFull];
+  if (url && url !== '#') window.open(url, '_blank');
+}
 
-// ── CHAR COUNT ──
+// ══════════════════════════════════════════
+// CHAR COUNT
+// ══════════════════════════════════════════
+function getLimit() {
+  return CONFIG.PLATFORM_LIMITS[currentPlatform] || 100;
+}
+function getLimitFull() {
+  return CONFIG.PLATFORM_LIMITS[currentPlatformFull] || 100;
+}
 function updateCharCount(elId, countId) {
   const el = document.getElementById(elId);
   const cnt = document.getElementById(countId);
   if (!el || !cnt) return;
   const n = el.textContent.length;
-  cnt.textContent = `${n} / 100 字`;
-  cnt.className = 'char-count ' + (n <= 80 ? 'ok' : n <= 100 ? 'warn' : 'over');
+  const lim = elId === 'xpostText' ? getLimit() : getLimitFull();
+  cnt.textContent = `${n} / ${lim} 字`;
+  cnt.className = 'char-count ' + (n <= lim*0.8 ? 'ok' : n <= lim ? 'warn' : 'over');
 }
 document.addEventListener('input', e => {
   if (e.target.id === 'xpostText') updateCharCount('xpostText','charCount');
@@ -1089,99 +1637,88 @@ function copyPost2() {
 }
 
 // ══════════════════════════════════════════
-// CRYPTO DATA (CoinGecko free)
+// CRYPTO DATA (CoinGecko)
 // ══════════════════════════════════════════
+const COIN_IDS = 'bitcoin,ethereum,binancecoin,solana,ripple,dogecoin,cardano,avalanche-2,chainlink,polkadot,sui,pepe,toncoin,arbitrum,near';
+const SYM = {bitcoin:'BTC',ethereum:'ETH',binancecoin:'BNB',solana:'SOL',ripple:'XRP',dogecoin:'DOGE',cardano:'ADA','avalanche-2':'AVAX',chainlink:'LINK',polkadot:'DOT',sui:'SUI',pepe:'PEPE',toncoin:'TON',arbitrum:'ARB',near:'NEAR'};
+
 async function fetchCrypto() {
   try {
-    const ids = 'bitcoin,ethereum,binancecoin,solana,ripple,dogecoin,cardano,avalanche-2,chainlink,polkadot,sui,pepe';
-    const r = await fetch(`https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${ids}&order=market_cap_desc&per_page=12&sparkline=false&price_change_percentage=24h`);
+    const r = await fetch(`https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${COIN_IDS}&order=market_cap_desc&per_page=15&sparkline=false&price_change_percentage=24h`, {signal: AbortSignal.timeout(10000)});
     if (!r.ok) throw new Error('CoinGecko error');
     cryptoData = await r.json();
-    renderCrypto();
+
+    // Update sidebar table
+    const tb = document.getElementById('cryptoTable');
+    if (tb) {
+      tb.innerHTML = `<thead><tr><th>代币</th><th>价格</th><th>24H%</th><th>市值</th></tr></thead><tbody>${
+        cryptoData.map(c => {
+          const chg = c.price_change_percentage_24h||0;
+          return `<tr>
+            <td><div class="p-sym">${SYM[c.id]||c.symbol.toUpperCase()}</div></td>
+            <td class="p-price">$${formatP(c.current_price)}</td>
+            <td>${chgBadge(chg)}</td>
+            <td class="p-mc">${formatMC(c.market_cap)}</td>
+          </tr>`;
+        }).join('')
+      }</tbody>`;
+      tb.style.display = '';
+      document.getElementById('cryptoLoadingRow').style.display = 'none';
+    }
+
+    // Markets page
+    const mw = document.getElementById('marketsCryptoWrap');
+    if (mw) {
+      mw.innerHTML = `<table class="ptable"><thead><tr><th>代币</th><th>价格</th><th>24H%</th><th>7D%</th><th>市值</th></tr></thead><tbody>${
+        cryptoData.map(c => {
+          const chg = c.price_change_percentage_24h||0;
+          return `<tr>
+            <td><div class="p-sym">${SYM[c.id]||c.symbol.toUpperCase()}</div><div class="p-name">${c.name}</div></td>
+            <td class="p-price">$${formatP(c.current_price)}</td>
+            <td>${chgBadge(chg)}</td>
+            <td>${chgBadge(c.price_change_percentage_7d_in_currency||0)}</td>
+            <td class="p-mc">${formatMC(c.market_cap)}</td>
+          </tr>`;
+        }).join('')
+      }</tbody></table><div style="padding:8px 12px;font-size:10px;color:var(--text4);font-family:var(--font-mono)">来源：CoinGecko · ${new Date().toLocaleTimeString('zh-CN')}</div>`;
+    }
+
+    // Heatmap
+    renderHeatmap(cryptoData);
+
+    // Ticker
     updateTicker();
+    // Quick stats
     updateQuickStats();
+
+    showToast('✅ 加密数据已更新');
   } catch(e) {
-    ['cryptoLoadingRow'].forEach(id => {
-      const el = document.getElementById(id);
-      if (el) el.innerHTML = '<span style="color:var(--red);padding:12px;font-size:12px">⚠ 加密数据加载失败 — 请检查网络</span>';
-    });
+    document.getElementById('cryptoLoadingRow').style.display = 'none';
+    const tb = document.getElementById('cryptoTable');
+    if (tb) { tb.style.display = ''; tb.innerHTML = '<tr><td colspan="4" style="padding:14px;color:var(--red);font-size:12px">⚠ 数据加载失败，CoinGecko 可能限速，请稍后重试</td></tr>'; }
   }
 }
 
-const SYM = {bitcoin:'BTC',ethereum:'ETH',binancecoin:'BNB',solana:'SOL',ripple:'XRP',dogecoin:'DOGE',cardano:'ADA','avalanche-2':'AVAX',chainlink:'LINK',polkadot:'DOT',sui:'SUI',pepe:'PEPE'};
-
-function renderCrypto() {
-  const makeTable = (data) => {
-    const rows = data.map(c => {
-      const chg = c.price_change_percentage_24h || 0;
-      return `<tr>
-        <td><div class="p-sym">${SYM[c.id]||c.symbol.toUpperCase()}</div><div class="p-name">${c.name}</div></td>
-        <td class="p-price">$${formatP(c.current_price)}</td>
-        <td>${chgBadge(chg)}</td>
-        <td class="p-mc">${formatMC(c.market_cap)}</td>
-      </tr>`;
-    }).join('');
-    return `<table class="ptable"><tr><th>代币</th><th>价格</th><th>24H</th><th>市值</th></tr>${rows}</table>`;
-  };
-
-  // Sidebar
-  document.getElementById('cryptoLoadingRow').style.display = 'none';
-  const sideTable = document.getElementById('cryptoTable');
-  sideTable.style.display = '';
-  const sideRows = cryptoData.slice(0,8).map(c => {
-    const chg = c.price_change_percentage_24h || 0;
-    return `<tr>
-      <td><div class="p-sym">${SYM[c.id]||c.symbol.toUpperCase()}</div></td>
-      <td class="p-price">$${formatP(c.current_price)}</td>
-      <td>${chgBadge(chg)}</td>
-    </tr>`;
-  }).join('');
-  sideTable.innerHTML = `<tr><th>代币</th><th>价格</th><th>24H</th></tr>${sideRows}`;
-
-  // Markets page
-  const mw = document.getElementById('marketsCryptoWrap');
-  if (mw) mw.innerHTML = makeTable(cryptoData);
-
-  // Heatmap
-  renderHeatmap(cryptoData);
-}
-
 function renderHeatmap(data) {
-  const grids = ['heatmapGrid','marketsHeatWrap'];
-  grids.forEach(gid => {
-    const g = document.getElementById(gid);
-    if (!g) return;
-    if (gid === 'heatLoadingRow') return;
-    g.innerHTML = '';
-    if (gid === 'heatmapGrid') {
-      document.getElementById('heatLoadingRow').style.display = 'none';
-      g.style.display = 'grid';
-    } else {
-      g.innerHTML = '<div class="heatmap">';
-    }
-    const container = gid === 'heatmapGrid' ? g : g;
-    const cells = data.map(c => {
-      const chg = c.price_change_percentage_24h || 0;
-      const intensity = Math.min(Math.abs(chg) / 8, 1);
-      const bg = chg > 0
-        ? `rgba(31,107,66,${0.25+intensity*0.75})`
-        : chg < 0
-        ? `rgba(184,34,34,${0.25+intensity*0.75})`
-        : 'rgba(120,110,100,0.3)';
-      const tc = intensity > 0.45 ? '#fff' : '#222';
-      const sym = SYM[c.id] || c.symbol.toUpperCase();
-      return `<div class="hm-cell" style="background:${bg};color:${tc}" title="${c.name}: ${chg>=0?'+':''}${chg.toFixed(2)}%">
-        <div class="hm-sym">${sym}</div>
-        <div class="hm-pct">${chg>=0?'+':''}${chg.toFixed(1)}%</div>
-      </div>`;
-    }).join('');
-
-    if (gid === 'heatmapGrid') {
-      container.innerHTML = cells;
-    } else {
-      container.innerHTML = `<div class="heatmap">${cells}</div>`;
-    }
-  });
+  const cells = data.slice(0,15).map(c => {
+    const chg = c.price_change_percentage_24h||0;
+    const intensity = Math.min(Math.abs(chg)/10, 1);
+    let bg, tc;
+    if (chg >= 5)      { bg = `rgba(26,100,56,${0.5+intensity*0.5})`; tc='#fff'; }
+    else if (chg >= 0) { bg = `rgba(26,100,56,${0.2+intensity*0.6})`; tc='#fff'; }
+    else if (chg >= -5){ bg = `rgba(176,30,30,${0.2+intensity*0.6})`; tc='#fff'; }
+    else               { bg = `rgba(176,30,30,${0.5+intensity*0.5})`; tc='#fff'; }
+    const sign = chg >= 0 ? '+' : '';
+    return `<div class="hm-cell" style="background:${bg};color:${tc}">
+      <div class="hm-sym">${SYM[c.id]||c.symbol.toUpperCase()}</div>
+      <div class="hm-pct">${sign}${chg.toFixed(1)}%</div>
+    </div>`;
+  }).join('');
+  const hmWrap = `<div class="heatmap">${cells}</div>`;
+  const hg = document.getElementById('heatmapGrid');
+  if (hg) hg.innerHTML = hmWrap;
+  const mh = document.getElementById('marketsHeatWrap');
+  if (mh) mh.innerHTML = hmWrap;
 }
 
 // ══════════════════════════════════════════
@@ -1189,17 +1726,17 @@ function renderHeatmap(data) {
 // ══════════════════════════════════════════
 async function fetchFearGreed() {
   try {
-    const r = await fetch('https://api.alternative.me/fng/?limit=1');
+    const r = await fetch('https://api.alternative.me/fng/?limit=1', {signal: AbortSignal.timeout(8000)});
     const d = await r.json();
     const val = parseInt(d.data[0].value);
     const label = d.data[0].value_classification;
     fearGreedValue = val;
 
     let color, emoji;
-    if (val<=20){color='#b82222';emoji='😱';}
-    else if(val<=40){color='#d45a00';emoji='😨';}
-    else if(val<=60){color='#b8960c';emoji='😐';}
-    else if(val<=80){color='#1f6b42';emoji='😊';}
+    if (val<=20){color='#b01e1e';emoji='😱';}
+    else if(val<=40){color='#c05000';emoji='😨';}
+    else if(val<=60){color='#9c7808';emoji='😐';}
+    else if(val<=80){color='#1a6438';emoji='😊';}
     else{color='#0d7860';emoji='🤑';}
 
     const fgHTML = `<div class="fg-wrap">
@@ -1214,11 +1751,9 @@ async function fetchFearGreed() {
     const mfg = document.getElementById('marketsFGWrap');
     if (mfg) mfg.innerHTML = fgHTML;
 
-    // Quick stat
     document.getElementById('qs-fg').textContent = val;
     document.getElementById('qs-fg').style.color = color;
     document.getElementById('qs-fg-label').textContent = label;
-    document.getElementById('qs-fg-label').className = 'stat-sub';
   } catch(e) {
     document.getElementById('fgLoadingRow').style.display = 'none';
     document.getElementById('fgContent').innerHTML = '<div style="padding:12px;color:var(--red);font-size:12px">⚠ 数据加载失败</div>';
@@ -1226,13 +1761,12 @@ async function fetchFearGreed() {
 }
 
 // ══════════════════════════════════════════
-// STOCKS (Stooq via allorigins)
+// STOCKS (Stooq via proxy)
 // ══════════════════════════════════════════
 async function fetchStooq(sym) {
   try {
     const url = `https://stooq.com/q/l/?s=${encodeURIComponent(sym)}&f=sd2t2ohlcv&h&e=csv`;
-    const proxy = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
-    const r = await fetch(proxy, {signal: AbortSignal.timeout(6000)});
+    const r = await fetch(CONFIG.PROXY_URL + encodeURIComponent(url), {signal: AbortSignal.timeout(7000)});
     const txt = await r.text();
     const lines = txt.trim().split('\n');
     if (lines.length < 2) return null;
@@ -1245,15 +1779,16 @@ async function fetchStooq(sym) {
 
 async function fetchStocks() {
   const stocks = [
-    {sym:'^spx', name:'S&P 500', label:'SPX'},
+    {sym:'^spx', name:'S&P 500',   label:'SPX'},
     {sym:'^ndx', name:'NASDAQ 100', label:'NDX'},
-    {sym:'^dji', name:'道琼斯', label:'DJI'},
-    {sym:'^vix', name:'恐慌指数 VIX', label:'VIX'},
+    {sym:'^dji', name:'道琼斯',     label:'DJI'},
+    {sym:'^vix', name:'波动率 VIX', label:'VIX'},
+    {sym:'^rut', name:'罗素 2000',  label:'RUT'},
   ];
   const results = await Promise.all(stocks.map(s => fetchStooq(s.sym).then(d => ({...s, d}))));
 
   const makeRow = ({label, name, d}) => {
-    if (!d) return `<tr><td><div class="p-sym">${label}</div><div class="p-name">${name}</div></td><td colspan="3" style="color:var(--text4);font-size:11px">数据获取中</td></tr>`;
+    if (!d) return `<tr><td><div class="p-sym">${label}</div><div class="p-name">${name}</div></td><td colspan="3" style="color:var(--text4);font-size:11px;font-family:var(--font-mono)">获取中...</td></tr>`;
     return `<tr>
       <td><div class="p-sym">${label}</div><div class="p-name">${name}</div></td>
       <td class="p-price">${d.close.toLocaleString('en-US',{minimumFractionDigits:1,maximumFractionDigits:2})}</td>
@@ -1262,32 +1797,26 @@ async function fetchStocks() {
     </tr>`;
   };
 
-  const tableHTML = `<table class="ptable"><tr><th>指数</th><th>价格</th><th>涨跌%</th><th>涨跌点</th></tr>${results.map(makeRow).join('')}</table>
-    <div style="padding:8px 12px;font-size:10px;color:var(--text4)">来源：Stooq · 数据仅供参考</div>`;
+  const tableHTML = `<table class="ptable"><thead><tr><th>指数</th><th>价格</th><th>涨跌%</th><th>涨跌点</th></tr></thead><tbody>${results.map(makeRow).join('')}</tbody></table>
+    <div style="padding:8px 12px;font-size:10px;color:var(--text4);font-family:var(--font-mono)">来源：Stooq · 数据仅供参考</div>`;
 
-  document.getElementById('stockLoadingRow').style.display = 'none';
-  document.getElementById('stockTable').style.display = '';
-  document.getElementById('stockTable').outerHTML; // force
-  const st = document.getElementById('stockTable');
-  st.style.display = 'none';
-
-  // Replace with div
-  const stockWrap = document.getElementById('stockLoadingRow').parentElement;
-  stockWrap.innerHTML = tableHTML;
-
+  const sw = document.getElementById('stockWrapInner');
+  if (sw) { sw.innerHTML = tableHTML; document.getElementById('stockLoadingRow').style.display = 'none'; }
   const msw = document.getElementById('marketsStockWrap');
   if (msw) msw.innerHTML = tableHTML;
 
   // Update ticker
-  const spx = results.find(r => r.label === 'SPX');
-  if (spx?.d) {
-    const cls = spx.d.chgPct >= 0 ? 'ticker-up' : 'ticker-dn';
-    const s = spx.d.chgPct >= 0 ? '+' : '';
-    ['tk-spx','tk-spx2'].forEach(id => {
-      const el = document.getElementById(id);
-      if (el) { el.textContent = `${spx.d.close.toFixed(0)} (${s}${spx.d.chgPct.toFixed(2)}%)`; el.className = cls; }
-    });
-  }
+  const spx = results.find(r => r.label==='SPX');
+  const ndx = results.find(r => r.label==='NDX');
+  const setTicker2 = (id1, id2, d, dec=0) => {
+    if (!d?.d) return;
+    const cls = d.d.chgPct>=0 ? 'ticker-up' : 'ticker-dn';
+    const s = d.d.chgPct>=0 ? '+' : '';
+    const p = d.d.close.toFixed(dec);
+    [id1,id2].forEach(id => { const el=document.getElementById(id); if(el){el.textContent=`${p} (${s}${d.d.chgPct.toFixed(2)}%)`;el.className=cls;} });
+  };
+  setTicker2('tk-spx','tk-spx2',spx,0);
+  setTicker2('tk-ndx','tk-ndx2',ndx,0);
 }
 
 // ══════════════════════════════════════════
@@ -1295,66 +1824,66 @@ async function fetchStocks() {
 // ══════════════════════════════════════════
 async function fetchCommodities() {
   const comms = [
-    {sym:'gc.f', name:'黄金', label:'GOLD', unit:'$/oz'},
-    {sym:'cl.f', name:'原油 WTI', label:'WTI', unit:'$/bbl'},
-    {sym:'eurusd', name:'欧元/美元', label:'EUR/USD', unit:''},
-    {sym:'dxy', name:'美元指数', label:'DXY', unit:''},
-    {sym:'gc.f', name:'白银 (近似)', label:'SILVER', unit:''},
+    {sym:'gc.f', name:'黄金 ($/oz)',     label:'GOLD'},
+    {sym:'cl.f', name:'原油 WTI ($/bbl)',label:'WTI'},
+    {sym:'si.f', name:'白银 ($/oz)',     label:'SILVER'},
+    {sym:'eurusd',name:'欧元/美元',      label:'EUR/USD'},
+    {sym:'dxy',  name:'美元指数',        label:'DXY'},
+    {sym:'usdjpy',name:'美元/日元',      label:'USD/JPY'},
   ];
-  // fetch only first 4
-  const results = await Promise.all(comms.slice(0,4).map(c => fetchStooq(c.sym).then(d => ({...c, d}))));
+  const results = await Promise.all(comms.map(c => fetchStooq(c.sym).then(d => ({...c, d}))));
 
-  const makeRow = ({label, name, d, unit}) => {
+  const makeRow = ({label, name, d}) => {
     if (!d) return `<tr><td><div class="p-sym">${label}</div><div class="p-name">${name}</div></td><td colspan="3" style="color:var(--text4);font-size:11px">获取中</td></tr>`;
     const priceStr = d.close >= 100 ? d.close.toLocaleString('en-US',{maximumFractionDigits:2}) : d.close.toFixed(4);
     return `<tr>
-      <td><div class="p-sym">${label}</div><div class="p-name">${name} ${unit}</div></td>
+      <td><div class="p-sym">${label}</div><div class="p-name">${name}</div></td>
       <td class="p-price">${priceStr}</td>
       <td>${chgBadge(d.chgPct)}</td>
       <td class="p-mc">${d.chg>=0?'+':''}${d.chg.toFixed(2)}</td>
     </tr>`;
   };
 
-  const tableHTML = `<table class="ptable"><tr><th>品种</th><th>价格</th><th>涨跌%</th><th>涨跌值</th></tr>${results.map(makeRow).join('')}</table>
-    <div style="padding:8px 12px;font-size:10px;color:var(--text4)">来源：Stooq · 数据仅供参考</div>`;
+  const tableHTML = `<table class="ptable"><thead><tr><th>品种</th><th>价格</th><th>涨跌%</th><th>涨跌值</th></tr></thead><tbody>${results.map(makeRow).join('')}</tbody></table>
+    <div style="padding:8px 12px;font-size:10px;color:var(--text4);font-family:var(--font-mono)">来源：Stooq · 数据仅供参考</div>`;
 
-  const commWrap = document.getElementById('commLoadingRow')?.parentElement;
-  if (commWrap) commWrap.innerHTML = tableHTML;
+  const cw = document.getElementById('commWrapInner');
+  if (cw) { cw.innerHTML = tableHTML; document.getElementById('commLoadingRow').style.display = 'none'; }
   const mcw = document.getElementById('marketsCommWrap');
   if (mcw) mcw.innerHTML = tableHTML;
 
-  // Ticker
-  const gold = results.find(r => r.label === 'GOLD');
-  const oil = results.find(r => r.label === 'WTI');
-  const dxy = results.find(r => r.label === 'DXY');
-  const setTicker = (id1, id2, d, digits=2) => {
+  const gold = results.find(r=>r.label==='GOLD');
+  const oil  = results.find(r=>r.label==='WTI');
+  const dxy  = results.find(r=>r.label==='DXY');
+  const setT = (id1,id2,d,dec=2) => {
     if (!d?.d) return;
-    const cls = d.d.chgPct >= 0 ? 'ticker-up' : 'ticker-dn';
-    const s = d.d.chgPct >= 0 ? '+' : '';
-    const p = d.d.close >= 100 ? d.d.close.toFixed(digits) : d.d.close.toFixed(4);
-    [id1,id2].forEach(id => {
-      const el = document.getElementById(id);
-      if (el) { el.textContent = `${p} (${s}${d.d.chgPct.toFixed(2)}%)`; el.className = cls; }
-    });
+    const cls = d.d.chgPct>=0 ? 'ticker-up' : 'ticker-dn';
+    const s = d.d.chgPct>=0 ? '+' : '';
+    const p = d.d.close>=100 ? d.d.close.toFixed(dec) : d.d.close.toFixed(4);
+    [id1,id2].forEach(id=>{const el=document.getElementById(id);if(el){el.textContent=`${p} (${s}${d.d.chgPct.toFixed(2)}%)`;el.className=cls;}});
   };
-  setTicker('tk-gold','tk-gold2', gold, 0);
-  setTicker('tk-oil','tk-oil2', oil, 2);
-  setTicker('tk-dxy','tk-dxy2', dxy, 2);
+  setT('tk-gold','tk-gold2',gold,0);
+  setT('tk-oil','tk-oil2',oil,2);
+  setT('tk-dxy','tk-dxy2',dxy,2);
 }
 
 // ══════════════════════════════════════════
 // UPDATE TICKER (crypto)
 // ══════════════════════════════════════════
 function updateTicker() {
-  const ids = [{id:'bitcoin',t1:'tk-btc',t2:'tk-btc2'},{id:'ethereum',t1:'tk-eth',t2:'tk-eth2'},{id:'solana',t1:'tk-sol',t2:'tk-sol2'}];
-  ids.forEach(({id, t1, t2}) => {
+  const ids = [
+    {id:'bitcoin',t1:'tk-btc',t2:'tk-btc2'},
+    {id:'ethereum',t1:'tk-eth',t2:'tk-eth2'},
+    {id:'solana',t1:'tk-sol',t2:'tk-sol2'},
+  ];
+  ids.forEach(({id,t1,t2}) => {
     const c = cryptoData.find(x => x.id === id);
     if (!c) return;
-    const chg = c.price_change_percentage_24h || 0;
-    const cls = chg >= 0 ? 'ticker-up' : 'ticker-dn';
-    const s = chg >= 0 ? '+' : '';
+    const chg = c.price_change_percentage_24h||0;
+    const cls = chg>=0 ? 'ticker-up' : 'ticker-dn';
+    const s = chg>=0 ? '+' : '';
     const txt = `$${formatP(c.current_price)} (${s}${chg.toFixed(2)}%)`;
-    [t1,t2].forEach(id => { const el=document.getElementById(id); if(el){el.textContent=txt;el.className=cls;} });
+    [t1,t2].forEach(id=>{const el=document.getElementById(id);if(el){el.textContent=txt;el.className=cls;}});
   });
 }
 
@@ -1362,64 +1891,106 @@ function updateTicker() {
 // QUICK STATS
 // ══════════════════════════════════════════
 function updateQuickStats() {
-  const btc = cryptoData.find(c => c.id === 'bitcoin');
-  const eth = cryptoData.find(c => c.id === 'ethereum');
-  if (btc) {
-    document.getElementById('qs-btc').textContent = '$'+formatP(btc.current_price);
-    const chg = btc.price_change_percentage_24h||0;
-    document.getElementById('qs-btc-chg').textContent = (chg>=0?'+':'')+chg.toFixed(2)+'%';
-    document.getElementById('qs-btc-chg').className = 'stat-sub '+chgCls(chg);
-  }
-  if (eth) {
-    document.getElementById('qs-eth').textContent = '$'+formatP(eth.current_price);
-    const chg = eth.price_change_percentage_24h||0;
-    document.getElementById('qs-eth-chg').textContent = (chg>=0?'+':'')+chg.toFixed(2)+'%';
-    document.getElementById('qs-eth-chg').className = 'stat-sub '+chgCls(chg);
-  }
+  const btc = cryptoData.find(c=>c.id==='bitcoin');
+  const eth = cryptoData.find(c=>c.id==='ethereum');
+  const sol = cryptoData.find(c=>c.id==='solana');
+
+  const setQ = (valId, chgId, price, chg) => {
+    const ve = document.getElementById(valId);
+    const ce = document.getElementById(chgId);
+    if (ve && price) ve.textContent = '$'+formatP(price);
+    if (ce && chg !== undefined) {
+      ce.textContent = (chg>=0?'+':'')+chg.toFixed(2)+'%';
+      ce.className = 'stat-sub '+chgCls(chg);
+    }
+  };
+
+  if (btc) setQ('qs-btc','qs-btc-chg', btc.current_price, btc.price_change_percentage_24h||0);
+  if (eth) setQ('qs-eth','qs-eth-chg', eth.current_price, eth.price_change_percentage_24h||0);
+  if (sol) setQ('qs-sol','qs-sol-chg', sol.current_price, sol.price_change_percentage_24h||0);
+
   const ups = cryptoData.filter(c=>(c.price_change_percentage_24h||0)>0).length;
   const total = cryptoData.length;
-  const sentiment = ups >= Math.ceil(total*0.7) ? '🟢 多头' : ups <= Math.floor(total*0.3) ? '🔴 空头' : '🟡 分化';
-  document.getElementById('qs-sentiment').textContent = sentiment;
-  document.getElementById('qs-market-trend').textContent = `${ups}/${total} 上涨`;
-  document.getElementById('qs-market-trend').className = 'stat-sub stat-neutral';
+  const sentiment = ups >= Math.ceil(total*0.65) ? '🟢 多头' : ups <= Math.floor(total*0.35) ? '🔴 空头' : '🟡 分化';
+  const sentEl = document.getElementById('qs-sentiment');
+  if (sentEl) sentEl.textContent = sentiment;
+  const trendEl = document.getElementById('qs-market-trend');
+  if (trendEl) { trendEl.textContent = `${ups}/${total} 上涨`; trendEl.className = 'stat-sub stat-neutral'; }
 }
 
 // ══════════════════════════════════════════
-// NEWS RSS
+// NEWS RSS — 更多来源（共 18+）
 // ══════════════════════════════════════════
 const RSS_SOURCES = [
-  {url:'https://cointelegraph.com/rss', cat:'crypto', src:'CoinTelegraph'},
-  {url:'https://decrypt.co/feed', cat:'crypto', src:'Decrypt'},
-  {url:'https://cryptoslate.com/feed/', cat:'crypto', src:'CryptoSlate'},
-  {url:'https://feeds.reuters.com/reuters/businessNews', cat:'macro', src:'Reuters Business'},
-  {url:'https://feeds.reuters.com/reuters/topNews', cat:'geo', src:'Reuters World'},
-  {url:'https://www.investing.com/rss/news_301.rss', cat:'us-stock', src:'Investing.com'},
-  {url:'https://www.investing.com/rss/news_14.rss', cat:'macro', src:'Investing.com Macro'},
-  {url:'https://www.investing.com/rss/news_25.rss', cat:'fx', src:'Investing.com FX'},
-  {url:'https://feeds.a.dj.com/rss/RSSMarketsMain.xml', cat:'macro', src:'WSJ Markets'},
-  {url:'https://feeds.a.dj.com/rss/WSJcomUSBusiness.xml', cat:'us-stock', src:'WSJ Business'},
+  // 加密货币
+  {url:'https://cointelegraph.com/rss',            cat:'crypto',   src:'CoinTelegraph',    lang:'en'},
+  {url:'https://decrypt.co/feed',                  cat:'crypto',   src:'Decrypt',          lang:'en'},
+  {url:'https://cryptoslate.com/feed/',            cat:'crypto',   src:'CryptoSlate',      lang:'en'},
+  {url:'https://www.coindesk.com/arc/outboundfeeds/rss/', cat:'crypto', src:'CoinDesk',    lang:'en'},
+  {url:'https://www.theblock.co/rss.xml',          cat:'crypto',   src:'The Block',        lang:'en'},
+  {url:'https://blockworks.co/feed',               cat:'crypto',   src:'Blockworks',       lang:'en'},
+  // 链上数据 / DeFi
+  {url:'https://defillama.com/blog/rss.xml',       cat:'chain',    src:'DeFiLlama',        lang:'en'},
+  // 宏观 / 全球
+  {url:'https://feeds.reuters.com/reuters/businessNews', cat:'macro', src:'Reuters Business', lang:'en'},
+  {url:'https://feeds.reuters.com/reuters/topNews',      cat:'geo',   src:'Reuters World',    lang:'en'},
+  {url:'https://feeds.a.dj.com/rss/RSSMarketsMain.xml',  cat:'macro', src:'WSJ Markets',      lang:'en'},
+  {url:'https://feeds.a.dj.com/rss/WSJcomUSBusiness.xml',cat:'us-stock',src:'WSJ Business',   lang:'en'},
+  {url:'https://www.ft.com/rss/home',              cat:'macro',    src:'Financial Times',  lang:'en'},
+  // 股票 / 外汇
+  {url:'https://www.investing.com/rss/news_301.rss',     cat:'us-stock',src:'Investing Stocks', lang:'en'},
+  {url:'https://www.investing.com/rss/news_14.rss',      cat:'macro',  src:'Investing Macro',  lang:'en'},
+  {url:'https://www.investing.com/rss/news_25.rss',      cat:'fx',     src:'Investing FX',     lang:'en'},
+  // 中文财经 (通过代理)
+  {url:'https://rss.36kr.com/feeds',               cat:'cn',       src:'36氪',             lang:'zh'},
+  {url:'https://www.cls.cn/api/sw?app=CLS&terminal=www&sv=8.2.2&page=1&type=1&rn=20', cat:'cn', src:'财联社', lang:'zh'},
+  // 备用: 华尔街见闻 (需 RSS 代理)
+  {url:'https://wallstreetcn.com/feed',            cat:'cn',       src:'华尔街见闻',       lang:'zh'},
 ];
 
 async function fetchOneRSS(source) {
   try {
-    const proxy = `https://api.allorigins.win/raw?url=${encodeURIComponent(source.url)}`;
-    const r = await fetch(proxy, {signal: AbortSignal.timeout(8000)});
+    const proxy = CONFIG.PROXY_URL + encodeURIComponent(source.url);
+    const r = await fetch(proxy, {signal: AbortSignal.timeout(9000)});
     const txt = await r.text();
+
+    // Try JSON first (财联社 etc.)
+    if (txt.trim().startsWith('{') || txt.trim().startsWith('[')) {
+      return parseJSONFeed(txt, source);
+    }
+
     const xml = new DOMParser().parseFromString(txt, 'text/xml');
     const items = xml.querySelectorAll('item');
     const out = [];
     items.forEach((item, i) => {
-      if (i >= 6) return;
-      const title = item.querySelector('title')?.textContent?.trim() || '';
-      let link = item.querySelector('link')?.textContent?.trim() || '';
-      if (!link) link = item.querySelector('link')?.nextSibling?.textContent?.trim() || '';
-      const desc = (item.querySelector('description')?.textContent || '').replace(/<[^>]*>/g,'').substring(0,150).trim();
-      const pubDate = item.querySelector('pubDate')?.textContent?.trim() || '';
+      if (i >= 8) return;
+      const title = item.querySelector('title')?.textContent?.trim()||'';
+      let link = item.querySelector('link')?.textContent?.trim()||'';
+      if (!link) link = item.querySelector('link')?.nextSibling?.textContent?.trim()||'';
+      const desc = (item.querySelector('description')?.textContent||'').replace(/<[^>]*>/g,'').substring(0,180).trim();
+      const pubDate = item.querySelector('pubDate')?.textContent?.trim()||
+                      item.querySelector('dc\\:date')?.textContent?.trim()||'';
       if (title && title.length > 5) {
-        out.push({title: sanitizeHTML(title), link: sanitizeURL(link), desc: sanitizeHTML(desc), pubDate, cat: source.cat, src: source.src});
+        out.push({title:sanitizeHTML(title), link:sanitizeURL(link), desc:sanitizeHTML(desc), pubDate, cat:source.cat, src:source.src, lang:source.lang||'en'});
       }
     });
     return out;
+  } catch { return []; }
+}
+
+function parseJSONFeed(txt, source) {
+  try {
+    const d = JSON.parse(txt);
+    const items = d.items || d.data || d.list || d.article_list || [];
+    return items.slice(0,8).map(item => ({
+      title: sanitizeHTML(item.title||item.brief||''),
+      link: sanitizeURL(item.url||item.link||item.shareurl||'#'),
+      desc: sanitizeHTML((item.brief||item.description||'').substring(0,180)),
+      pubDate: item.ctime ? new Date(item.ctime*1000).toISOString() : item.pubDate||'',
+      cat: source.cat,
+      src: source.src,
+      lang: source.lang||'zh',
+    })).filter(i => i.title.length > 4);
   } catch { return []; }
 }
 
@@ -1430,33 +2001,56 @@ async function fetchNews() {
 
   const results = await Promise.allSettled(RSS_SOURCES.map(s => fetchOneRSS(s)));
   let items = [];
-  results.forEach(r => { if (r.status === 'fulfilled') items = items.concat(r.value); });
+  results.forEach(r => { if (r.status==='fulfilled') items = items.concat(r.value); });
+  // Deduplicate by title prefix
+  const seen = new Set();
+  items = items.filter(i => {
+    const key = i.title.substring(0,20);
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
   items.sort((a,b) => new Date(b.pubDate||0) - new Date(a.pubDate||0));
   allNewsItems = items;
 
+  const successSources = results.filter(r=>r.status==='fulfilled'&&r.value.length>0).length;
+
   document.getElementById('newsLoadingDash').style.display = 'none';
-  document.getElementById('newsCountLabel').textContent = `${items.length} 条 · ${new Date().toLocaleTimeString('zh-CN')} 更新`;
-  document.getElementById('newsFullSub').textContent = `共 ${items.length} 条 · 来源：WSJ · Reuters · CoinTelegraph · Decrypt · Investing.com`;
+  document.getElementById('newsCountLabel').textContent = `${items.length} 条 · ${successSources} 来源 · ${new Date().toLocaleTimeString('zh-CN')}`;
+  document.getElementById('newsFullSub').textContent = `共 ${items.length} 条 · ${successSources}/${RSS_SOURCES.length} 来源成功`;
+
+  // Quick stats
+  const qn = document.getElementById('qs-news');
+  if (qn) qn.textContent = items.length;
+  const qns = document.getElementById('qs-news-sub');
+  if (qns) qns.textContent = `${successSources} 来源`;
+  const qnst = document.getElementById('newsCountStatus');
+  if (qnst) qnst.textContent = `${items.length} 条资讯 · ${successSources} 来源`;
 
   renderDashNews(items, 'all');
   renderFullNews(items, 'all');
+
+  showToast(`✅ 已获取 ${items.length} 条资讯`);
 }
 
 const BADGE_MAP = {
-  crypto:{label:'CRYPTO',cls:'b-crypto'},
-  macro:{label:'宏观',cls:'b-macro'},
-  'us-stock':{label:'美股',cls:'b-stock'},
-  geo:{label:'地缘',cls:'b-geo'},
-  fx:{label:'外汇',cls:'b-fx'},
+  crypto:  {label:'CRYPTO',  cls:'b-crypto'},
+  macro:   {label:'宏观',    cls:'b-macro'},
+  'us-stock':{label:'美股',  cls:'b-stock'},
+  geo:     {label:'地缘',    cls:'b-geo'},
+  fx:      {label:'外汇',    cls:'b-fx'},
+  chain:   {label:'链上',    cls:'b-chain'},
+  cn:      {label:'中文',    cls:'b-cn'},
 };
 
 function newsItemHTML(item) {
   const b = BADGE_MAP[item.cat] || BADGE_MAP['macro'];
-  const t = item.pubDate ? new Date(item.pubDate).toLocaleString('zh-CN',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}) : '';
+  const t = item.pubDate ? timeAgo(item.pubDate) : '';
+  const isNew = item.pubDate && (Date.now()-new Date(item.pubDate)) < 3600000;
   return `<div class="news-item" data-cat="${item.cat}">
     <span class="news-badge ${b.cls}">${b.label}</span>
     <div class="news-content">
-      <div class="news-title"><a href="${item.link}" target="_blank" rel="noopener noreferrer">${item.title}</a></div>
+      <div class="news-title"><a href="${item.link}" target="_blank" rel="noopener noreferrer">${item.title}</a>${isNew?' <span class="news-hot">NEW</span>':''}</div>
       ${item.desc ? `<div class="news-desc">${item.desc}</div>` : ''}
       <div class="news-foot">
         <span class="news-src">${item.src}</span>
@@ -1468,167 +2062,278 @@ function newsItemHTML(item) {
 
 function renderDashNews(items, cat) {
   const el = document.getElementById('dashNewsList');
-  const filtered = cat === 'all' ? items : items.filter(i => i.cat === cat);
-  el.innerHTML = filtered.slice(0,12).map(newsItemHTML).join('') ||
+  const filtered = cat==='all' ? items : items.filter(i=>i.cat===cat);
+  el.innerHTML = filtered.slice(0,15).map(newsItemHTML).join('') ||
     '<div class="empty-state"><div class="empty-icon">📭</div><div class="empty-text">暂无相关资讯</div></div>';
 }
-
 function renderFullNews(items, cat) {
   const el = document.getElementById('fullNewsList');
-  const filtered = cat === 'all' ? items : items.filter(i => i.cat === cat);
-  el.innerHTML = filtered.slice(0,50).map(newsItemHTML).join('') ||
+  const filtered = cat==='all' ? items : items.filter(i=>i.cat===cat);
+  el.innerHTML = filtered.slice(0,60).map(newsItemHTML).join('') ||
     '<div class="empty-state"><div class="empty-icon">📭</div><div class="empty-text">暂无相关资讯</div></div>';
 }
-
 function filterDashNews(tabEl, cat) {
-  document.querySelectorAll('#dashNewsTabs .ntab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('#dashNewsTabs .ntab').forEach(t=>t.classList.remove('active'));
   tabEl.classList.add('active');
   renderDashNews(allNewsItems, cat);
 }
-
 function filterFullNews(tabEl, cat) {
-  document.querySelectorAll('#page-news .news-tabs .ntab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('#fullNewsTabs .ntab').forEach(t=>t.classList.remove('active'));
   tabEl.classList.add('active');
   renderFullNews(allNewsItems, cat);
 }
 
 // ══════════════════════════════════════════
-// CONTENT ENGINE (Local — no external AI API)
+// AI SUMMARY (Claude API or fallback)
+// ══════════════════════════════════════════
+async function summarizeNews() {
+  const box = document.getElementById('aiSummaryBox');
+  const txt = document.getElementById('aiSummaryText');
+  const timeEl = document.getElementById('aiSummaryTime');
+  box.style.display = 'block';
+  txt.innerHTML = '<div class="loading-row" style="padding:4px 0"><div class="spinner"></div> AI 正在分析 <strong>' + allNewsItems.slice(0,20).length + '</strong> 条资讯...</div>';
+
+  if (CONFIG.ANTHROPIC_API_KEY) {
+    try {
+      const titles = allNewsItems.slice(0,20).map((n,i) => `${i+1}. [${n.src}] ${n.title}`).join('\n');
+      const result = await callClaudeAPI(
+        `你是一位顶级宏观分析师。请对以下 ${allNewsItems.slice(0,20).length} 条市场资讯进行简洁深度分析（200字以内），提炼核心叙事、主要风险和短期展望：\n\n${titles}`,
+        200
+      );
+      txt.innerHTML = result.replace(/\n/g,'<br>');
+    } catch(e) {
+      txt.innerHTML = buildLocalSummary();
+    }
+  } else {
+    await new Promise(r=>setTimeout(r,800));
+    txt.innerHTML = buildLocalSummary();
+  }
+  timeEl.textContent = new Date().toLocaleTimeString('zh-CN');
+}
+
+function buildLocalSummary() {
+  const sig = extractSignals(allNewsItems.slice(0,20).map(n=>n.title));
+  const snap = getSnap();
+  let parts = [];
+  if (sig.fed) parts.push('美联储政策动向持续主导资产定价');
+  if (sig.war) parts.push('地缘局势仍是风险偏好的主要压制因素');
+  if (sig.trade) parts.push('贸易摩擦升温，全球供应链面临不确定性');
+  if (sig.btcBull && snap.btcPrice) parts.push(`加密市场出现看涨信号，BTC 当前 $${snap.btcPrice}`);
+  if (sig.btcBear) parts.push('加密市场承压，BTC 面临下行风险');
+  if (sig.earnings) parts.push('财报季数据正在影响美股估值');
+  if (sig.recession) parts.push('衰退预期升温，防御性资产受到关注');
+  if (parts.length === 0) parts.push('当前市场资讯密度中等，无强方向性信号');
+  return parts.join('；') + '。建议重点关注高影响力经济数据发布节点。';
+}
+
+// ══════════════════════════════════════════
+// CLAUDE API CALL
+// ══════════════════════════════════════════
+async function callClaudeAPI(prompt, maxTokens=300) {
+  // 如未配置 API Key，返回 null 使用本地引擎
+  if (!CONFIG.ANTHROPIC_API_KEY) return null;
+  
+  const r = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': CONFIG.ANTHROPIC_API_KEY,
+      'anthropic-version': '2023-06-01',
+    },
+    body: JSON.stringify({
+      model: CONFIG.AI_MODEL,
+      max_tokens: maxTokens,
+      messages: [{role:'user', content: prompt}],
+    })
+  });
+  if (!r.ok) throw new Error(`API error ${r.status}`);
+  const d = await r.json();
+  return d.content?.[0]?.text || '';
+}
+
+// ══════════════════════════════════════════
+// CONTENT ENGINE
 // ══════════════════════════════════════════
 function extractSignals(titles) {
   const joined = titles.join(' ').toLowerCase();
   return {
-    war:      /war|conflict|strike|attack|military|sanction|霍尔木兹|战争|伊朗|iran|gaza|ukraine|geopolit/i.test(joined),
-    fed:      /fed|fomc|rate|inflation|cpi|pce|powell|interest|通胀|利率|美联储|dovish|hawkish/i.test(joined),
-    trade:    /tariff|trade war|china|关税|贸易|export restriction/i.test(joined),
-    oil:      /oil|crude|opec|energy|petroleum|原油|油价/i.test(joined),
-    gold:     /gold|黄金|precious|safe.haven/i.test(joined),
-    btcBull:  /bitcoin surge|btc rise|rally|record|all.time|bull|breakout/i.test(joined),
-    btcBear:  /bitcoin fall|btc drop|crash|dump|bear|correction|liquidat/i.test(joined),
-    regulation:/sec|cftc|regulation|ban|法规|监管|compliance/i.test(joined),
-    recession:/recession|slowdown|gdp|衰退|放缓|stagflat/i.test(joined),
-    etf:      /etf|institutional|fund|机构|blackrock|fidelity/i.test(joined),
-    earnings: /earnings|revenue|profit|quarter|财报/i.test(joined),
-    debt:     /debt|deficit|treasury|yield|国债|财政/i.test(joined),
+    war:       /war|conflict|strike|attack|military|sanction|霍尔木兹|战争|伊朗|iran|gaza|ukraine|geopolit|missile|troops/i.test(joined),
+    fed:       /fed|fomc|rate|inflation|cpi|pce|powell|interest|通胀|利率|美联储|dovish|hawkish|pivot|cut|hike/i.test(joined),
+    trade:     /tariff|trade war|china|关税|贸易|export restriction|protectionism|制裁/i.test(joined),
+    oil:       /oil|crude|opec|energy|petroleum|原油|油价|brent|wti/i.test(joined),
+    gold:      /gold|黄金|precious|safe.haven|haven demand/i.test(joined),
+    btcBull:   /bitcoin surge|btc rise|rally|record|all.time|bull|breakout|inflow|etf buy/i.test(joined),
+    btcBear:   /bitcoin fall|btc drop|crash|dump|bear|correction|liquidat|outflow|hack|exploit/i.test(joined),
+    regulation:/sec|cftc|regulation|ban|法规|监管|compliance|crackdown|enforce/i.test(joined),
+    recession: /recession|slowdown|gdp|衰退|放缓|stagflat|contraction|layoff|unemployment/i.test(joined),
+    etf:       /etf|institutional|fund|机构|blackrock|fidelity|grayscale|spot etf/i.test(joined),
+    earnings:  /earnings|revenue|profit|quarter|财报|eps|beat|miss|guidance/i.test(joined),
+    debt:      /debt|deficit|treasury|yield|国债|财政|spread|default/i.test(joined),
+    china:     /china|xi|pboc|cny|中国|人民币|央行|a.?股/i.test(joined),
+    defi:      /defi|dao|nft|protocol|liquidity|yield|tvl|staking|layer2|l2/i.test(joined),
   };
 }
 
 function getSnap() {
-  const snap = {btcPrice:null, btcChg:null, ethPrice:null, ethChg:null, solChg:null, sentiment:'', ups:0};
+  const snap = {btcPrice:null,btcChg:null,ethPrice:null,ethChg:null,solPrice:null,solChg:null,sentiment:'',ups:0};
   if (!cryptoData.length) return snap;
   const btc = cryptoData.find(c=>c.id==='bitcoin');
   const eth = cryptoData.find(c=>c.id==='ethereum');
   const sol = cryptoData.find(c=>c.id==='solana');
   if (btc) { snap.btcPrice=formatP(btc.current_price); snap.btcChg=(btc.price_change_percentage_24h||0).toFixed(1); }
   if (eth) { snap.ethPrice=formatP(eth.current_price); snap.ethChg=(eth.price_change_percentage_24h||0).toFixed(1); }
-  if (sol) snap.solChg=(sol.price_change_percentage_24h||0).toFixed(1);
+  if (sol) { snap.solPrice=formatP(sol.current_price); snap.solChg=(sol.price_change_percentage_24h||0).toFixed(1); }
   snap.ups = cryptoData.filter(c=>(c.price_change_percentage_24h||0)>0).length;
   const total = cryptoData.length;
   snap.sentiment = snap.ups >= Math.ceil(total*0.65) ? '普涨' : snap.ups <= Math.floor(total*0.35) ? '普跌' : '分化';
-  snap.btcDir = parseFloat(snap.btcChg) >= 0 ? '走高' : '回落';
+  snap.btcDir = snap.btcChg && parseFloat(snap.btcChg)>=0 ? '走高' : '回落';
   return snap;
 }
 
 function pickRotate(arr) {
-  _postVariant = (_postVariant + 1) % arr.length;
+  _postVariant = (_postVariant+1) % arr.length;
   return arr[_postVariant];
 }
 
-function buildPost(topic) {
+function truncatePost(post, limit) {
+  if (post.length <= limit) return post;
+  const cut = post.substring(0, limit);
+  const puncts = ['。','！','？','，','、'];
+  let lastIdx = -1;
+  for (const p of puncts) {
+    const i = cut.lastIndexOf(p);
+    if (i > lastIdx && i > Math.floor(limit*0.55)) lastIdx = i;
+  }
+  return lastIdx > Math.floor(limit*0.55) ? cut.substring(0, lastIdx+1) : cut.substring(0, limit-3) + '…';
+}
+
+function buildPost(topic, platform='x') {
   const snap = getSnap();
-  const sig = extractSignals(allNewsItems.slice(0,15).map(n=>n.title));
+  const sig = extractSignals(allNewsItems.slice(0,18).map(n=>n.title));
   const hasBtc = !!snap.btcPrice;
-  const btcStr = hasBtc ? `$BTC ${snap.btcDir} ${parseFloat(snap.btcChg)>=0?'+':''}${snap.btcChg}%，报 $${snap.btcPrice}` : '$BTC 横盘';
+  const btcStr = hasBtc ? `$BTC ${snap.btcDir} ${parseFloat(snap.btcChg||0)>=0?'+':''}${snap.btcChg}%，报 $${snap.btcPrice}` : '$BTC 横盘';
+  const limit = CONFIG.PLATFORM_LIMITS[platform] || 100;
 
   let candidates = [];
 
-  if (topic === 'crypto' || topic === 'all') {
+  // === CRYPTO ===
+  if (topic==='crypto'||topic==='all') {
+    if (sig.etf && hasBtc) candidates.push(
+      `机构 ETF 资金流入是当前最重要的结构性变量。${btcStr}，${snap.sentiment}。这轮不是情绪驱动，是钱驱动——节奏和 2021 完全不同，拿住比追涨更重要。`,
+      `${btcStr}，整体${snap.sentiment}。ETF 通道打开后，机构仓位调整速度比散户慢得多——这意味着波动会更小但更持久。短期噪音忽视，看季度级别的资金趋势。`
+    );
     if (sig.war && hasBtc) candidates.push(
-      `地缘局势还没落定，${btcStr}。加密周末流动性薄，波动看起来大，实际方向很模糊。真正定调的是周一亚洲盘开盘后的成交量。现在守好仓位比抢反弹重要。`,
-      `${btcStr}，整体${snap.sentiment}。战争溢价压着风险偏好，机构周末不会大举建仓。把注意力放在油价和美元走势上——这两个才是下一步的风向标。`,
-      `霍尔木兹风险还在，${btcStr}。加密不是避险资产，但也没跟着跌太多，说明底部有人在接。关键支撑守住了，等消息面稳定再谈方向。`
+      `地缘局势还没落定，${btcStr}。加密周末流动性薄，波动看起来大，实际方向模糊。真正定调的是周一亚洲盘开盘后的成交量。守好仓位比抢反弹更重要。`,
+      `${btcStr}，整体${snap.sentiment}。战争溢价压着风险偏好，机构周末不会大举建仓。把注意力放在油价和美元——这两个才是下一步的风向标。`
     );
-    else if (sig.fed && hasBtc) candidates.push(
-      `联储不急着降息，市场在消化这个现实。${btcStr}，${snap.sentiment}格局。ETH $${snap.ethPrice||'--'}。高利率持续时间超预期，流动性溢价会持续压制加密估值，这点要有心理准备。`,
-      `通胀黏性 vs 降息预期——这个拉锯没结束。${btcStr}，看不到大行情。ETH ${snap.ethChg>=0?'+':''}${snap.ethChg}%，跟着走。等数据给方向，比现在硬猜强多了。`,
-      `${btcStr}，整体${snap.sentiment}。美联储窗口期是加密的难熬时段——大资金不敢重仓，散户情绪也容易随消息面飘。保持轻仓，等方向明确再说。`
+    if (sig.fed && hasBtc) candidates.push(
+      `联储政策路径是当前加密市场最大外部变量。${btcStr}，${snap.sentiment}。高利率环境下，风险资产需要更强的叙事才能维持估值。等待降息信号明确比贸然加仓合理。`,
+      `${btcStr}，每次宏观数据出来加密都要抖一下——说明相关性还很高，独立叙事不够强。真正的牛市需要一个让机构愿意持续买入的故事，ETF 是开始，不是全部。`
     );
-    else if (sig.etf) candidates.push(
-      `机构资金在动。${btcStr}，ETF 流入数据值得关注。ETH $${snap.ethPrice||'--'}。这一轮如果是机构主导的行情，那波动会比散户主导的时候小，但持续性更强。`,
-      `${btcStr}，整体${snap.sentiment}。ETF 资金持续进场是这轮最大的结构性变化，和 2021 年靠散户情绪驱动的行情不一样。逻辑不同，节奏也不一样。`
+    if (sig.regulation) candidates.push(
+      `监管消息密集，但市场的反应已经比 2022 年成熟得多——不再无脑抛售，开始区分"限制"和"打压"。合规成本上升是事实，但真正通过审查的项目可能反而受益。`
     );
-    else if (hasBtc) candidates.push(
-      `${btcStr}，ETH $${snap.ethPrice||'--'}，整体${snap.sentiment}。缺少强催化剂，市场靠存量在撑。成交量是关键——量不放大，现有位置的趋势可信度有限。`,
-      `${btcStr}，整体${snap.sentiment}。没有新叙事推动的行情，容易反复。不追高不摸底，等有效突破再入场，是这种横盘环境里最省力的策略。`,
-      `加密市场${snap.sentiment}，${btcStr}。${snap.ups}/${cryptoData.length} 个标的上涨，分化不严重。这种格局通常说明主力资金没有明确做方向，继续观望为主。`
+    if (sig.defi) candidates.push(
+      `链上数据比价格更诚实。DeFi TVL、交易所净流量、鲸鱼地址行为——这些才是判断底部或顶部的先行指标。K线是结果，链上是过程。`
+    );
+    if (!candidates.length && hasBtc) candidates.push(
+      `${btcStr}，整体${snap.sentiment}。当前行情缺乏强叙事，价格运动以技术面和短期情绪为主。量能不配合的突破可信度低——等清晰信号再入场。`,
+      `${snap.ups}/${cryptoData.length} 个主流币上涨，${snap.sentiment}格局。板块轮动明显，但缺乏主线。观望等待比频繁换仓更符合当前市场节奏。`
     );
   }
 
-  if (!candidates.length && topic === 'us-stock') candidates.push(
-    `美股在宏观数据和地缘风险之间反复拉锯。降息预期每松动一次，纳指就弹一下；通胀数据一超预期，马上又跌回去。这种市场，频繁操作成本很高，做波段不如拿住逻辑清晰的标的。`,
-    `科技股的估值压力还在，高利率环境下 PE 扩张空间有限。财报季是下一个关键节点——盈利能不能跑赢预期，决定了这轮反弹有没有延续性。`,
-    `美股当前不是方向不好，是节奏太难把握。宏观数据、联储表态、地缘风险轮番出现，每次都引发超调。与其追短线，不如等一个清晰的宏观信号。`
-  );
+  // === US STOCK ===
+  if (topic==='us-stock'||topic==='all') {
+    if (sig.earnings) candidates.push(
+      `财报季是美股最重要的基本面检验。盈利能否超预期、指引是否下调，直接决定这轮反弹的持续性。头部科技公司的增长质量比 EPS 的绝对值更重要。`,
+      `美股当前的核心矛盾：高估值遇到高利率。如果财报显示盈利足够强，可以支撑现有估值；如果指引下调，就要面对"杀估值"的压力。看好选择权比押注方向性更理性。`
+    );
+    if (sig.fed) candidates.push(
+      `美联储利率决策牵动所有资产。降息推迟→长端利率维持高位→高估值科技股承压。但市场已经多次消化这个预期，每次真正下跌时都有买盘承接——说明底部承接力不弱。`
+    );
+    candidates.push(
+      `标普 500 的走势是全球风险偏好的晴雨表。当 SPX 在高位横盘时，资金在内部轮动——科技→消费→防御。这种状态可以持续很长时间，不一定立刻转跌。`
+    );
+  }
 
-  if (!candidates.length && topic === 'macro') candidates.push(
-    `当前最大的宏观矛盾：增长在放缓，但通胀还没完全降温。美联储夹在中间，既不能太鸽，也不能太鹰。这种摇摆周期里，资产定价本来就混乱，不用过度解读每一次波动。`,
-    `滞胀的轮廓越来越清晰——GDP 增速在降，CPI 降不下去。历史上这种组合对股债都不友好，黄金和大宗商品相对抗跌。配置上要想清楚自己在对冲什么风险。`,
-    `全球宏观周期正在分化：美国增长韧性，欧洲和中国面临更大下行压力。这种分化会在外汇市场体现得最直接——美元相对强势的格局短期难以逆转。`
-  );
+  // === MACRO ===
+  if (topic==='macro'||topic==='all') {
+    if (sig.fed) candidates.push(
+      `通胀降温速度比联储预期慢，"Higher for longer"不是威胁，是现实。每次 CPI 或就业数据出来，市场重新定价一次。波动是正常的，方向是清晰的——不要把震荡误读成趋势反转。`,
+      `美联储在等通胀和就业之间的平衡。目前就业还强，通胀还黏，这个组合对降息最不利。但市场的博弈是：硬着陆来了，联储会更快降。所以反而要防"利好变利空"的反转。`
+    );
+    if (sig.recession) candidates.push(
+      `衰退预期升温但数据还没崩。这个时间窗口是最模糊的——衰退可能来，也可能被控制住。建议关注领先指标：PMI、首申失业金、收益率曲线——比"感觉"更可靠。`
+    );
+    if (sig.china) candidates.push(
+      `中国经济的复苏节奏比预期慢，但政策工具箱还没用完。人民币贬值压力和资本流出是短期变量，中长期看增量政策的落地质量。A股情绪与基本面的背离值得关注。`
+    );
+    if (!candidates.length) candidates.push(
+      `全球流动性拐点是当前最重要的宏观叙事。美元强势能持续多久，取决于其他主要央行的政策路径。欧日英的降息节奏一旦快于美联储，资金会重新流向新兴市场和商品。`
+    );
+  }
 
-  if (!candidates.length && topic === 'geo') candidates.push(
-    `地缘风险溢价是当前资产定价里最难量化的变量。油价是最直接的晴雨表，霍尔木兹局势每次升温都会在能源市场留下印记。跟踪这个比看K线图更有信息含量。`,
-    `战争对市场的冲击往往分两阶段：第一反应是恐慌性抛售，然后市场学会定价新的均衡。现在问题是这轮不确定性的持续时间比以往更长，市场在等一个明确的去向。`
-  );
+  // === GEO ===
+  if (topic==='geo'||topic==='all') {
+    if (sig.war) candidates.push(
+      `地缘风险溢价是当前资产定价里最难量化的变量。油价是最直接的晴雨表，霍尔木兹局势每次升温都在能源市场留下印记。跟踪这个比看K线图更有信息含量。`,
+      `战争对市场的冲击分两阶段：第一反应是恐慌性抛售，然后市场学会定价新均衡。现在问题是这轮不确定性的持续时间比以往更长，市场在等一个明确的去向。`
+    );
+    if (!candidates.length) candidates.push(
+      `地缘政治的长期影响往往被市场低估。供应链重构、能源版图变化、美元体系的压力——这些慢变量才是真正的宏观底层。短期波动是噪音，结构性变化才是信号。`
+    );
+  }
 
-  if (!candidates.length && topic === 'fx') candidates.push(
-    `美元强势周期还没结束，核心原因是美联储降息时间表比其他央行推得更晚。DXY 强，非美货币就会持续承压。黄金在这种环境下两难：通胀对冲需求 vs 高实际利率的压制。`,
-    `原油和地缘绑在一起，汇市跟着走。避险情绪高涨时，美元和日元会先跑；若局势缓和，高息货币和新兴市场货币有补涨逻辑。当下先看油价怎么走。`
-  );
+  // === FX ===
+  if (topic==='fx'||topic==='all') {
+    if (sig.oil) candidates.push(
+      `原油走势锁定了大部分汇率的方向。产油国货币跟油价走；避险情绪高时美元和日元受益；局势缓和时，高息货币有补涨逻辑。当下先看油价再做外汇判断。`
+    );
+    candidates.push(
+      `美元强势周期还没结束，核心原因是美联储降息时间表比其他央行推得更晚。DXY 强，非美货币就会持续承压。黄金两难：通胀对冲需求 vs 高实际利率的压制。`
+    );
+  }
+
+  // === CN ===
+  if (topic==='cn') {
+    candidates.push(
+      `政策组合拳力度超预期，但市场反应偏克制——说明投资者在等执行层面的落地，而非仅凭预期入场。A股底部承接力有所增强，但持续性需要盈利数据来验证。`,
+      `人民币汇率在 7.2-7.3 区间横盘，反映了中美利差和资本流动的双重压力。若美联储启动降息周期，对人民币的压制会系统性减弱，届时北向资金或有回归动力。`,
+      `加密资产在大陆法规层面仍属合规灰区，但香港的监管框架正在给机构提供参与通道。这是一个值得跟踪的合规化进程——合规 = 更多机构资金 = 更少的极端波动。`
+    );
+  }
 
   // Fallback
   if (!candidates.length) {
-    const fb = hasBtc ? `$BTC $${snap.btcPrice} (${parseFloat(snap.btcChg)>=0?'+':''}${snap.btcChg}%)，整体${snap.sentiment}。` : '';
-    candidates.push(`${fb}当前市场观望气氛浓，增量资金有限。操作上轻仓等待清晰信号优于重仓博弈，节奏比判断更重要。`);
+    const fb = hasBtc ? `$BTC $${snap.btcPrice} (${parseFloat(snap.btcChg||0)>=0?'+':''}${snap.btcChg}%)，整体${snap.sentiment}。` : '';
+    candidates.push(`${fb}当前市场观望气氛浓，增量资金有限。轻仓等待清晰信号优于重仓博弈，节奏比判断重要。`);
   }
 
   let post = pickRotate(candidates);
-
-  // Hard limit 100 chars
-  if (post.length > 100) {
-    const cut = post.substring(0, 100);
-    const puncts = ['。','！','？','，','、'];
-    let lastIdx = -1;
-    for (const p of puncts) {
-      const i = cut.lastIndexOf(p);
-      if (i > lastIdx && i > 55) lastIdx = i;
-    }
-    post = lastIdx > 55 ? cut.substring(0, lastIdx+1) : cut.substring(0, 97) + '…';
-  }
-
-  return post;
+  return truncatePost(post, limit);
 }
 
 function buildAnalysis(topic) {
   const snap = getSnap();
-  const sig = extractSignals(allNewsItems.slice(0,18).map(n=>n.title));
-  const topicLabel = {all:'全领域宏观',crypto:'加密货币',  'us-stock':'美股', macro:'宏观经济', geo:'地缘政治', fx:'外汇商品'}[topic]||'市场';
+  const sig = extractSignals(allNewsItems.slice(0,20).map(n=>n.title));
+  const topicLabel = {all:'全领域宏观',crypto:'加密货币','us-stock':'美股',macro:'宏观经济',geo:'地缘政治',fx:'外汇商品',cn:'中国财经'}[topic]||'市场';
 
   // CONTRADICTION
   let contra = '';
   if (sig.war && sig.fed) contra = `地缘冲突与货币政策同步施压，市场面临双重不确定性。战争风险推升避险需求，但美联储高利率环境限制了资金流向风险资产的空间。两个因素叠加，短期方向极难判断。`;
   else if (sig.fed && sig.recession) contra = `"预防性降息"与"通胀黏性"的矛盾在升温。经济数据开始走软，但物价还没降到联储舒适区。如果硬等通胀达标再降息，衰退风险会先来；如果提前降，通胀可能反弹。`;
-  else if (sig.war) contra = `地缘局势制造了不确定性溢价，但市场已经有一定消化能力。真正的矛盾在于：战争是短期冲击还是会改变能源、供应链的中期结构？不同答案对应完全不同的资产配置逻辑。`;
+  else if (sig.war) contra = `地缘局势制造了不确定性溢价，但市场已有一定消化能力。真正的矛盾在于：战争是短期冲击还是会改变能源、供应链的中期结构？不同答案对应完全不同的资产配置逻辑。`;
   else if (sig.fed) contra = `通胀降温速度比联储预期慢，降息时间表一再后推。市场的矛盾是：估值里已经定价了降息预期，但实际降息迟迟不来，导致风险资产反复面临估值压力。`;
-  else if (sig.trade) contra = `贸易摩擦的不确定性正在压制企业投资意愿和消费者信心。关税政策的范围和力度还未落地，市场处于"等待确认"状态，方向性资金不敢轻易下注。`;
-  else contra = `增量资金有限，存量博弈加剧。在没有强催化剂的情况下，市场容易形成自我实现的震荡——多空双方都在等对方先动，导致波动加大但方向不明。`;
+  else if (sig.trade) contra = `贸易摩擦的不确定性压制企业投资意愿和消费者信心。关税政策的范围和力度还未落地，市场处于"等待确认"状态，方向性资金不敢轻易下注。`;
+  else if (sig.china) contra = `中国经济复苏节奏偏慢，政策刺激力度与市场预期之间存在落差。这一分歧在人民币汇率、大宗商品需求和新兴市场资产定价上都有所体现。`;
+  else contra = `增量资金有限，存量博弈加剧。在没有强催化剂的情况下，市场容易形成自我实现的震荡——多空双方都在等对方先动，波动加大但方向不明。`;
 
   // LOGIC
   let logic = '';
-  const btcPart = snap.btcPrice ? `$BTC $${snap.btcPrice} (${parseFloat(snap.btcChg)>=0?'+':''}${snap.btcChg}%)，` : '';
+  const btcPart = snap.btcPrice ? `$BTC $${snap.btcPrice} (${parseFloat(snap.btcChg||0)>=0?'+':''}${snap.btcChg}%)，` : '';
   if (sig.etf && snap.btcPrice) logic = `${btcPart}机构 ETF 资金仍在持续流入，是本轮最重要的结构性支撑。这和 2021 年散户情绪驱动的行情有本质区别——机构进出节奏慢但量大，不容易被短期消息面带跑。当前整体${snap.sentiment}，主导逻辑是资金面而非叙事面。`;
-  else if (sig.war) logic = `${btcPart}风险偏好受到地缘局势压制。油价是当前最敏感的定价资产，其他风险资产跟着走。加密市场${snap.sentiment}，短期内更多是情绪传导，而非独立的基本面逻辑在主导。`;
-  else if (sig.fed) logic = `${btcPart}整体${snap.sentiment}。美联储政策路径是当前定价主线——每次就业和通胀数据出来，市场都要重新定价降息预期，引发资产价格剧烈波动。技术面意义相对弱化，宏观面才是决定性的。`;
+  else if (sig.war) logic = `${btcPart}风险偏好受地缘局势压制。油价是当前最敏感的定价资产，其他风险资产跟着走。加密市场${snap.sentiment}，短期内更多是情绪传导，而非独立基本面逻辑主导。`;
+  else if (sig.fed) logic = `${btcPart}整体${snap.sentiment}。美联储政策路径是当前定价主线——每次就业和通胀数据出来，市场都要重新定价降息预期。技术面意义相对弱化，宏观面才是决定性的。`;
   else if (snap.btcPrice) logic = `${btcPart}整体${snap.sentiment}，${snap.ups}/${cryptoData.length} 个主要标的收涨。当前行情缺少强叙事，价格运动以技术面和短期情绪为主。成交量是判断趋势有效性的关键指标，量能不配合的突破可信度低。`;
   else logic = `当前${topicLabel}行情由宏观情绪主导，基本面驱动力相对弱。流动性环境、美元走向和地缘风险构成三角压力，缺少任何一个缓解，风险资产都难有持续性行情。`;
 
@@ -1638,42 +2343,96 @@ function buildAnalysis(topic) {
   if (sig.fed) riskList.push('通胀数据超预期，美联储被迫维持更长高利率');
   if (sig.trade) riskList.push('关税政策落地范围扩大，全球供应链受冲击');
   if (sig.recession) riskList.push('经济数据持续走弱，衰退预期升温压制风险资产');
-  if (sig.regulation) riskList.push('监管政策收紧，合规成本上升');
+  if (sig.regulation) riskList.push('监管政策收紧，合规成本上升抑制流动性');
+  if (sig.china) riskList.push('中国经济复苏不及预期，压制大宗商品需求');
   riskList.push('流动性突然收缩，引发连锁去杠杆');
   if (riskList.length < 3) riskList.push('宏观数据超预期偏差，触发程序化大幅波动');
-  const risks = riskList.slice(0,3).map((r,i)=>`${['①','②','③'][i]} ${r}`).join('；') + '。';
+  const risks = riskList.slice(0,3).map((r,i)=>`${['①','②','③'][i]} ${r}`).join('；')+'。';
+
+  // CHAIN SIGNALS
+  let chain = '';
+  if (snap.btcPrice) {
+    chain = `链上参考指标：BTC 交易所净流量、鲸鱼地址持仓变化、MVRV Z-score（评估市场相对高低估程度）、Funding Rate（衡量多空力量对比）。当前 Funding Rate 建议关注是否出现极端值。`;
+  } else {
+    chain = `美债收益率曲线、金融条件指数（FCI）、企业债利差（Credit Spread）是判断系统性风险的关键先行指标。建议同步跟踪。`;
+  }
 
   // OUTLOOK
   const now = new Date();
   const dayStr = ['日','一','二','三','四','五','六'][now.getDay()];
   let outlook = '';
-  if (sig.war) outlook = `周${dayStr}前后密切跟踪地缘消息面。若局势出现缓和信号，风险资产可以期待修复性反弹；若升级，建议回避高波动资产，转向防御性配置。油价是最直接的前瞻信号，优先盯住。`;
-  else if (sig.fed) outlook = `未来1-2周，核心通胀数据和美联储官员表态是最大变量。数据偏软→降息预期修复→风险资产偏多；数据超预期→降息后推→震荡格局延续。数据出来前不建议重仓押方向。`;
-  else if (sig.earnings) outlook = `财报季是近期最重要的基本面催化剂。盈利能否超预期、指引是否下调，直接决定了这轮反弹的持续性。关注头部科技公司的财报质量，它们的走势会带动整体市场情绪。`;
+  if (sig.war) outlook = `周${dayStr}前后密切跟踪地缘消息面。若局势出现缓和信号，风险资产可期待修复性反弹；若升级，建议回避高波动资产，转向防御性配置。油价是最直接的前瞻信号，优先盯住。`;
+  else if (sig.fed) outlook = `未来 1-2 周，核心通胀数据和美联储官员表态是最大变量。数据偏软 → 降息预期修复 → 风险资产偏多；数据超预期 → 降息后推 → 震荡格局延续。数据出来前不建议重仓押方向。`;
+  else if (sig.earnings) outlook = `财报季是近期最重要的基本面催化剂。盈利能否超预期、指引是否下调，直接决定这轮反弹的持续性。关注头部科技公司的财报质量，它们的走势会带动整体市场情绪。`;
   else outlook = `${snap.btcPrice?`$BTC 当前 $${snap.btcPrice} 附近横盘`:'短期市场维持震荡'}，缺乏强方向性催化剂。操作上建议等待有效突破确认后再入场，避免在信息密集期过度频繁操作。控制仓位，守住资金效率。`;
 
-  return {contra, logic, risks, outlook};
+  return {contra, logic, risks, chain, outlook};
 }
 
 // ══════════════════════════════════════════
-// GENERATE POST
+// GENERATE POST (local)
 // ══════════════════════════════════════════
 async function generatePost() {
   const loading = document.getElementById('postLoading');
   const area = document.getElementById('postArea');
   loading.classList.add('show');
   area.style.opacity = '0.3';
-  await new Promise(r => setTimeout(r, 700));
+  await new Promise(r => setTimeout(r, 500));
 
-  const post = buildPost(currentTopic);
+  const post = buildPost(currentTopic, currentPlatform);
   const el = document.getElementById('xpostText');
   el.textContent = post;
   el.classList.remove('empty');
   updateCharCount('xpostText','charCount');
-
   loading.classList.remove('show');
   area.style.opacity = '1';
   generateAnalysis();
+}
+
+async function generatePostAI() {
+  const loading = document.getElementById('postLoading');
+  const area = document.getElementById('postArea');
+  loading.classList.add('show');
+  area.style.opacity = '0.3';
+
+  if (CONFIG.ANTHROPIC_API_KEY) {
+    try {
+      const snap = getSnap();
+      const sig = extractSignals(allNewsItems.slice(0,15).map(n=>n.title));
+      const headlines = allNewsItems.slice(0,10).map(n=>n.title).join('\n');
+      const limit = getLimit();
+      const platName = {x:'X/Twitter', weibo:'微博', tg:'Telegram', long:'长文分析'}[currentPlatform]||'社交媒体';
+      const btcInfo = snap.btcPrice ? `BTC: $${snap.btcPrice} (${snap.btcChg}%), ETH: $${snap.ethPrice} (${snap.ethChg}%)` : '加密价格暂无';
+      
+      const prompt = `你是一位顶级宏观分析师和加密 KOL，语言风格专业但接地气，不用AI腔调。
+      
+当前市场数据：${btcInfo}，市场情绪：${snap.sentiment}
+近期重要新闻：
+${headlines}
+
+请为${platName}生成一条高质量投稿（聚焦：${currentTopic}，${limit}字以内），要求：
+- 有洞察深度，不说废话
+- 有具体数据支撑
+- 语气专业自信但不绝对
+- 直接输出内容，不要标题或解释`;
+
+      const result = await callClaudeAPI(prompt, 300);
+      const el = document.getElementById('xpostText');
+      el.textContent = truncatePost(result, limit);
+      el.classList.remove('empty');
+      updateCharCount('xpostText','charCount');
+      showToast('✨ AI 投稿生成完成');
+    } catch(e) {
+      showToast('⚠ AI 生成失败，使用本地模板');
+      await generatePost();
+    }
+  } else {
+    await generatePost();
+    showToast('💡 提示：配置 API Key 后可启用真正的 AI 生成');
+  }
+
+  loading.classList.remove('show');
+  area.style.opacity = '1';
 }
 
 async function generatePostFull() {
@@ -1681,16 +2440,54 @@ async function generatePostFull() {
   const area = document.getElementById('postArea2');
   loading.classList.add('show');
   area.style.opacity = '0.3';
-  await new Promise(r => setTimeout(r, 700));
+  await new Promise(r => setTimeout(r, 500));
 
-  const post = buildPost(currentTopicX);
+  const post = buildPost(currentTopicX, currentPlatformFull);
   const el = document.getElementById('xpostText2');
   el.textContent = post;
   updateCharCount('xpostText2','charCount2');
-
   loading.classList.remove('show');
   area.style.opacity = '1';
   renderStyleExamples();
+}
+
+async function generatePostFullAI() {
+  const loading = document.getElementById('postLoading2');
+  const area = document.getElementById('postArea2');
+  loading.classList.add('show');
+  area.style.opacity = '0.3';
+
+  if (CONFIG.ANTHROPIC_API_KEY) {
+    try {
+      const snap = getSnap();
+      const headlines = allNewsItems.slice(0,10).map(n=>n.title).join('\n');
+      const limit = getLimitFull();
+      const platName = {x:'X/Twitter', weibo:'微博', tg:'Telegram', long:'长文分析'}[currentPlatformFull]||'社交媒体';
+      const btcInfo = snap.btcPrice ? `BTC: $${snap.btcPrice}, ETH: $${snap.ethPrice}` : '';
+      
+      const prompt = `你是顶级加密宏观 KOL，风格专业深刻，语言简洁有力，避免AI味。
+
+数据：${btcInfo} · 情绪：${snap.sentiment}
+资讯：${headlines}
+
+为${platName}写 ${currentTopicX} 方向的高质量内容（${limit}字以内），要有洞察、有数据、有观点。直接输出正文。`;
+
+      const result = await callClaudeAPI(prompt, 400);
+      const el = document.getElementById('xpostText2');
+      el.textContent = truncatePost(result, limit);
+      updateCharCount('xpostText2','charCount2');
+      showToast('✨ AI 内容生成完成');
+    } catch(e) {
+      await generatePostFull();
+      showToast('⚠ AI 失败，已用本地模板');
+    }
+  } else {
+    await generatePostFull();
+    showToast('💡 配置 API Key 后可启用真正的 AI 生成');
+  }
+
+  loading.classList.remove('show');
+  area.style.opacity = '1';
 }
 
 // ══════════════════════════════════════════
@@ -1699,9 +2496,9 @@ async function generatePostFull() {
 async function generateAnalysis() {
   const el = document.getElementById('analysisContent');
   el.innerHTML = '<div class="loading-row"><div class="spinner"></div> 正在整合分析...</div>';
-  await new Promise(r => setTimeout(r, 500));
+  await new Promise(r => setTimeout(r, 400));
 
-  const {contra, logic, risks, outlook} = buildAnalysis(currentTopic);
+  const {contra, logic, risks, chain, outlook} = buildAnalysis(currentTopic);
   document.getElementById('analysisSub').textContent = `已更新 · ${new Date().toLocaleTimeString('zh-CN')}`;
 
   el.innerHTML = `<div class="analysis-section">
@@ -1721,28 +2518,271 @@ async function generateAnalysis() {
       <div class="a-label blue">短期展望</div>
       <div class="a-text">${outlook}</div>
     </div>
+    <div class="analysis-block cyan-border full">
+      <div class="a-label cyan">链上 / 技术参考</div>
+      <div class="a-text">${chain}</div>
+    </div>
   </div>
-  <div style="padding-top:8px;font-size:10px;color:var(--text4);text-align:right">
+  <div style="padding-top:8px;font-size:10px;color:var(--text4);text-align:right;font-family:var(--font-mono)">
     基于实时资讯与行情 · 仅供参考，不构成投资建议
   </div>`;
 }
 
+async function generateAnalysisAI() {
+  const el = document.getElementById('analysisContent');
+  el.innerHTML = '<div class="loading-row"><div class="spinner"></div> AI 正在深度分析...</div>';
+
+  if (CONFIG.ANTHROPIC_API_KEY) {
+    try {
+      const snap = getSnap();
+      const headlines = allNewsItems.slice(0,15).map(n=>`[${n.src}] ${n.title}`).join('\n');
+      const btcInfo = snap.btcPrice ? `BTC $${snap.btcPrice}(${snap.btcChg}%), ETH $${snap.ethPrice}(${snap.ethChg}%), 情绪${snap.sentiment}` : '';
+
+      const result = await callClaudeAPI(
+        `你是顶级宏观分析师，请基于以下数据进行深度分析（600字以内）：
+
+市场数据：${btcInfo}
+近期要闻：
+${headlines}
+
+输出格式：
+【核心矛盾】（50字）
+【行情逻辑】（100字）
+【主要风险】（用①②③列举）
+【短期展望】（100字）
+【操作建议】（50字，不构成投资建议）`,
+        800
+      );
+
+      document.getElementById('analysisSub').textContent = `AI 分析 · ${new Date().toLocaleTimeString('zh-CN')}`;
+      el.innerHTML = `<div style="display:flex;align-items:center;gap:8px;margin-bottom:12px"><span class="ai-badge">✨ Claude AI 分析</span></div>
+        <div style="font-size:13.5px;line-height:1.85;color:var(--text2);white-space:pre-line">${sanitizeHTML(result)}</div>
+        <div style="padding-top:10px;font-size:10px;color:var(--text4);font-family:var(--font-mono)">由 Claude AI 生成 · 仅供参考，不构成投资建议</div>`;
+      showToast('✨ AI 分析完成');
+    } catch(e) {
+      await generateAnalysis();
+      showToast('⚠ AI 分析失败，已用本地引擎');
+    }
+  } else {
+    await generateAnalysis();
+    showToast('💡 配置 Anthropic API Key 后可启用 AI 增强分析');
+  }
+}
+
 // ══════════════════════════════════════════
-// X STYLE EXAMPLES
+// STYLE EXAMPLES
 // ══════════════════════════════════════════
 function renderStyleExamples() {
   const examples = [
-    {label:'📌 风格参考 A（宏观分析型）', text:'降息预期越推越远，但市场不跌——说明资金在等，不是在逃。这种"撑而不涨"的状态往往是大方向切换前的积累期。'},
-    {label:'📌 风格参考 B（行情点评型）', text:'$BTC 守住支撑，没有大跌，说明筹码结构还行。但成交量萎缩是隐患——流动性不回来，靠情绪推不出新高。'},
-    {label:'📌 风格参考 C（地缘评论型）', text:'霍尔木兹的风险没消失，只是被市场暂时定价了。油价是最直接的晴雨表，比任何分析师预测都更诚实。'},
+    {label:'风格 A · 宏观分析型', text:'降息预期越推越远，但市场不跌——说明资金在等，不是在逃。这种"撑而不涨"的状态往往是大方向切换前的积累期。'},
+    {label:'风格 B · 行情点评型', text:'$BTC 守住支撑，没有大跌，说明筹码结构还行。但成交量萎缩是隐患——流动性不回来，靠情绪推不出新高。'},
+    {label:'风格 C · 地缘评论型', text:'霍尔木兹的风险没消失，只是被市场暂时定价了。油价是最直接的晴雨表，比任何分析师预测都更诚实。'},
+    {label:'风格 D · 中文财经型', text:'政策组合拳落地，但市场反应克制——投资者在等执行层面的落地而非仅凭预期入场。等待基本面验证比抢跑更理性。'},
   ];
   const el = document.getElementById('xStyleExamples');
   if (!el) return;
   el.innerHTML = examples.map(e => `
     <div style="background:var(--bg2);border-radius:8px;padding:10px 14px;margin-bottom:8px;border:1px solid var(--border)">
-      <div style="font-size:11px;color:var(--text4);margin-bottom:4px;font-weight:700">${e.label}</div>
-      <div style="font-size:13px;line-height:1.7;color:var(--text2)">${e.text}</div>
+      <div style="font-size:10px;color:var(--text4);margin-bottom:4px;font-weight:700;font-family:var(--font-mono);text-transform:uppercase;letter-spacing:0.8px">📌 ${e.label}</div>
+      <div style="font-size:13px;line-height:1.75;color:var(--text2)">${e.text}</div>
     </div>`).join('');
+}
+
+// ══════════════════════════════════════════
+// KOL PAGE DATA
+// ══════════════════════════════════════════
+const KOL_DATA = {
+  cryptoX: [
+    {name:'Arthur Hayes', handle:'@CryptoHayes', desc:'BitMEX 创始人，宏观加密洞察', url:'https://x.com/CryptoHayes', color:'#1a4f7a'},
+    {name:'Lyn Alden', handle:'@LynAldenContact', desc:'宏观策略师，比特币深度研究', url:'https://x.com/LynAldenContact', color:'#5b3fa0'},
+    {name:'Raoul Pal', handle:'@RaoulGMI', desc:'GMI 创始人，全球宏观与数字资产', url:'https://x.com/RaoulGMI', color:'#1a6438'},
+    {name:'Willy Woo', handle:'@woonomic', desc:'链上数据分析，BTC 估值模型', url:'https://x.com/woonomic', color:'#c06020'},
+    {name:'PlanB', handle:'@100trillionUSD', desc:'S2F 模型创始人，BTC 量化分析', url:'https://x.com/100trillionUSD', color:'#9c7808'},
+    {name:'Pomp', handle:'@APompliano', desc:'加密投资人，每日市场评论', url:'https://x.com/APompliano', color:'#b01e1e'},
+    {name:'Glassnode', handle:'@glassnode', desc:'链上数据权威平台', url:'https://x.com/glassnode', color:'#0e7090'},
+    {name:'Ki Young Ju', handle:'@ki_young_ju', desc:'CryptoQuant CEO，链上资金流', url:'https://x.com/ki_young_ju', color:'#5b3fa0'},
+  ],
+  macroX: [
+    {name:'Felix Salmon', handle:'@felixsalmon', desc:'Axios 首席经济记者', url:'https://x.com/felixsalmon', color:'#184e7a'},
+    {name:'Mohamed El-Erian', handle:'@elerianm', desc:'AllianzGI 首席经济顾问', url:'https://x.com/elerianm', color:'#1a6438'},
+    {name:'Michael Burry', handle:'@michaeljburry', desc:'"大空头"原型，宏观博弈', url:'https://x.com/michaeljburry', color:'#b01e1e'},
+    {name:'Zoltan Pozsar', handle:'@ZPozsar', desc:'前瑞信宏观策略师，美元体系', url:'https://x.com/ZPozsar', color:'#5b3fa0'},
+    {name:'Jim Bianco', handle:'@biancoresearch', desc:'Bianco Research 创始人', url:'https://x.com/biancoresearch', color:'#c06020'},
+    {name:'Jim Rickards', handle:'@JamesGRickards', desc:'美元体系与货币战争专家', url:'https://x.com/JamesGRickards', color:'#9c7808'},
+  ],
+  stockX: [
+    {name:'Josh Brown', handle:'@ReformedBroker', desc:'Ritholtz Wealth, 美股解读', url:'https://x.com/ReformedBroker', color:'#184e7a'},
+    {name:'Michael Batnick', handle:'@michaelbatnick', desc:'投资分析，数据可视化', url:'https://x.com/michaelbatnick', color:'#1a6438'},
+    {name:'Eddy Elfenbein', handle:'@eddyelfenbein', desc:'CWS Capital，美股精选', url:'https://x.com/eddyelfenbein', color:'#5b3fa0'},
+    {name:'MarketWatch', handle:'@MarketWatch', desc:'美股权威实时新闻', url:'https://x.com/MarketWatch', color:'#b01e1e'},
+  ],
+  weibo: [
+    {name:'财联社', handle:'@财联社', desc:'国内财经速报，加密资讯', url:'https://weibo.com/cailianshe', color:'#e6162d'},
+    {name:'华尔街见闻', handle:'@华尔街见闻', desc:'全球宏观，深度分析', url:'https://weibo.com/wallstreetcn', color:'#e6162d'},
+    {name:'老虎证券', handle:'@老虎证券', desc:'美股港股，投资者教育', url:'https://weibo.com/tigerbrokers', color:'#e6162d'},
+    {name:'Odaily星球日报', handle:'@Odaily星球日报', desc:'Web3 · 加密产业动态', url:'https://weibo.com/odailynews', color:'#e6162d'},
+    {name:'PANews', handle:'@PANews区块链', desc:'区块链行业资讯', url:'https://weibo.com/panews', color:'#e6162d'},
+    {name:'金色财经', handle:'@金色财经', desc:'加密市场中文第一媒体', url:'https://weibo.com/jinseio', color:'#e6162d'},
+  ],
+  telegram: [
+    {name:'MacroHub 情报站', handle:'t.me/MacroHub', desc:'本站官方频道（示例）', url:'https://t.me', color:'#0088cc'},
+    {name:'华语加密社区', handle:'t.me/CryptoCN', desc:'中文加密讨论', url:'https://t.me', color:'#0088cc'},
+    {name:'Crypto Signals', handle:'t.me/cryptosignals', desc:'英文宏观加密信号', url:'https://t.me', color:'#0088cc'},
+    {name:'Bitcoin & Macro', handle:'t.me/btcmacro', desc:'BTC 宏观研究频道', url:'https://t.me', color:'#0088cc'},
+  ],
+};
+
+const DATA_SOURCES = [
+  {name:'CoinGecko', desc:'加密价格·市值·热力图', url:'https://coingecko.com', icon:'₿'},
+  {name:'Alternative.me', desc:'恐贪指数·情绪数据', url:'https://alternative.me/crypto/fear-and-greed-index/', icon:'😨'},
+  {name:'Glassnode', desc:'链上分析·机构级数据', url:'https://glassnode.com', icon:'⛓'},
+  {name:'Dune Analytics', desc:'链上查询·DeFi数据', url:'https://dune.com', icon:'🔍'},
+  {name:'TradingView', desc:'技术分析·走势图表', url:'https://tradingview.com', icon:'📈'},
+  {name:'CryptoQuant', desc:'交易所资金流·矿工', url:'https://cryptoquant.com', icon:'📊'},
+  {name:'DefiLlama', desc:'DeFi TVL·协议数据', url:'https://defillama.com', icon:'🦙'},
+  {name:'Messari', desc:'加密研究·报告数据库', url:'https://messari.io', icon:'📑'},
+  {name:'CME FedWatch', desc:'美联储降息概率工具', url:'https://www.cmegroup.com/markets/interest-rates/cme-fedwatch-tool.html', icon:'🏛'},
+  {name:'FRED', desc:'美联储经济数据库', url:'https://fred.stlouisfed.org', icon:'🏦'},
+  {name:'Investing.com', desc:'全球行情·经济日历', url:'https://investing.com', icon:'🌐'},
+  {name:'Coinglass', desc:'合约数据·清算地图', url:'https://coinglass.com', icon:'💧'},
+];
+
+function kolCardHTML(kol, platform='x') {
+  const platBadge = {x:'kol-x', weibo:'kol-weibo', tg:'kol-tg'}[platform]||'kol-x';
+  const platLabel = {x:'𝕏', weibo:'微博', tg:'TG'}[platform]||'𝕏';
+  const initial = kol.name[0];
+  return `<div class="kol-card" onclick="window.open('${kol.url}','_blank')" style="cursor:pointer">
+    <div class="kol-avatar" style="background:${kol.color}">${initial}</div>
+    <div class="kol-info">
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:2px">
+        <span class="kol-name">${sanitizeHTML(kol.name)}</span>
+        <span class="kol-platform ${platBadge}">${platLabel}</span>
+      </div>
+      <div class="kol-handle">${sanitizeHTML(kol.handle)}</div>
+      <div class="kol-desc">${sanitizeHTML(kol.desc)}</div>
+    </div>
+  </div>`;
+}
+
+function renderKOLPage() {
+  const cx = document.getElementById('kolCryptoX');
+  if (cx && !cx.innerHTML) cx.innerHTML = KOL_DATA.cryptoX.map(k=>kolCardHTML(k,'x')).join('');
+  const mx = document.getElementById('kolMacroX');
+  if (mx && !mx.innerHTML) mx.innerHTML = KOL_DATA.macroX.map(k=>kolCardHTML(k,'x')).join('');
+  const sx = document.getElementById('kolStockX');
+  if (sx && !sx.innerHTML) sx.innerHTML = KOL_DATA.stockX.map(k=>kolCardHTML(k,'x')).join('');
+  const wb = document.getElementById('kolWeibo');
+  if (wb && !wb.innerHTML) wb.innerHTML = KOL_DATA.weibo.map(k=>kolCardHTML(k,'weibo')).join('');
+  const tg = document.getElementById('kolTelegram');
+  if (tg && !tg.innerHTML) tg.innerHTML = KOL_DATA.telegram.map(k=>kolCardHTML(k,'tg')).join('');
+  const ds = document.getElementById('dataSourceGrid');
+  if (ds && !ds.innerHTML) ds.innerHTML = DATA_SOURCES.map(s => `
+    <a href="${s.url}" target="_blank" rel="noopener" style="text-decoration:none">
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:12px 14px;transition:all 0.15s;cursor:pointer" onmouseover="this.style.background='var(--bg3)'" onmouseout="this.style.background='var(--bg2)'">
+        <div style="font-size:18px;margin-bottom:5px">${s.icon}</div>
+        <div style="font-size:12.5px;font-weight:700;color:var(--text);margin-bottom:3px">${sanitizeHTML(s.name)}</div>
+        <div style="font-size:11px;color:var(--text3);line-height:1.5">${sanitizeHTML(s.desc)}</div>
+      </div>
+    </a>`).join('');
+}
+
+// ══════════════════════════════════════════
+// ECONOMIC CALENDAR
+// ══════════════════════════════════════════
+function buildCalendarData() {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = now.getMonth();
+  
+  // Static upcoming events (in real deployment, fetch from Investing.com or ForexFactory)
+  // TODO: 接入 Investing.com Economic Calendar API 或 ForexFactory RSS
+  const events = [
+    {date: new Date(year, month, now.getDate()+1), title:'美国 CPI 月率', desc:'核心通胀关键数据，影响联储降息预期', impact:'high', cat:'macro'},
+    {date: new Date(year, month, now.getDate()+2), title:'美联储会议纪要', desc:'深入了解联储内部讨论与利率路径', impact:'high', cat:'macro'},
+    {date: new Date(year, month, now.getDate()+3), title:'美国初请失业金人数', desc:'就业市场健康状况领先指标', impact:'med', cat:'macro'},
+    {date: new Date(year, month, now.getDate()+4), title:'欧洲央行利率决议', desc:'欧洲货币政策方向，影响欧元与风险偏好', impact:'high', cat:'macro'},
+    {date: new Date(year, month, now.getDate()+5), title:'美国非农就业数据', desc:'月度最重要宏观数据，直接影响联储决策', impact:'high', cat:'macro'},
+    {date: new Date(year, month, now.getDate()+6), title:'比特币期权到期日', desc:'Deribit 大量期权合约到期，注意价格波动', impact:'high', cat:'crypto'},
+    {date: new Date(year, month, now.getDate()+7), title:'美国 PPI 生产者价格', desc:'上游通胀压力，预判 CPI 走向', impact:'med', cat:'macro'},
+    {date: new Date(year, month, now.getDate()+8), title:'密歇根消费者信心', desc:'美国消费者预期，反映经济信心', impact:'med', cat:'macro'},
+    {date: new Date(year, month, now.getDate()+10), title:'美国零售销售', desc:'消费支出趋势，GDP 组成部分', impact:'med', cat:'macro'},
+    {date: new Date(year, month, now.getDate()+12), title:'英国 GDP 季率', desc:'英国经济增长，影响英镑走势', impact:'med', cat:'macro'},
+    {date: new Date(year, month, now.getDate()+14), title:'以太坊主网升级', desc:'技术里程碑，关注 ETH 价格反应', impact:'high', cat:'crypto'},
+    {date: new Date(year, month, now.getDate()+15), title:'美联储利率决议 + 点阵图', desc:'最重要的货币政策事件，市场最大风险点', impact:'high', cat:'macro'},
+    {date: new Date(year, month, now.getDate()+18), title:'中国工业产出 & 零售销售', desc:'中国经济健康度，影响大宗商品需求', impact:'med', cat:'macro'},
+    {date: new Date(year, month, now.getDate()+20), title:'日本央行利率决议', desc:'日元政策，影响全球套利交易', impact:'high', cat:'macro'},
+  ];
+
+  calendarData = events.sort((a,b) => a.date - b.date);
+  return calendarData;
+}
+
+function eventHTML(ev) {
+  const impClass = {high:'imp-high', med:'imp-med', low:'imp-low'}[ev.impact]||'imp-low';
+  const impLabel = {high:'高影响', med:'中影响', low:'低影响'}[ev.impact]||'';
+  const month = (ev.date.getMonth()+1).toString().padStart(2,'0');
+  const day = ev.date.getDate().toString().padStart(2,'0');
+  const weekday = ['日','一','二','三','四','五','六'][ev.date.getDay()];
+  const catBadge = ev.cat==='crypto' ? '<span style="font-size:9px;background:#fff3e0;color:#b03000;padding:1px 5px;border-radius:2px;font-family:var(--font-mono);font-weight:700">₿ CRYPTO</span>' :
+                                        '<span style="font-size:9px;background:#e8f5e9;color:#1b5e20;padding:1px 5px;border-radius:2px;font-family:var(--font-mono);font-weight:700">宏观</span>';
+  return `<div class="event-item" data-impact="${ev.impact}" data-cat="${ev.cat}">
+    <div class="event-date">
+      <span class="day">${day}</span>
+      <span>${month}月</span>
+      <span>周${weekday}</span>
+    </div>
+    <div class="event-info">
+      <div style="display:flex;align-items:center;gap:7px;margin-bottom:4px">
+        <span class="event-title">${sanitizeHTML(ev.title)}</span>
+        <span class="event-impact ${impClass}">${impLabel}</span>
+        ${catBadge}
+      </div>
+      <div class="event-desc">${sanitizeHTML(ev.desc)}</div>
+    </div>
+  </div>`;
+}
+
+function renderCalendar(filter='all') {
+  const data = buildCalendarData();
+  const list = document.getElementById('calendarList');
+  let filtered = data;
+  if (filter==='high') filtered = data.filter(e=>e.impact==='high');
+  else if (filter==='med') filtered = data.filter(e=>e.impact==='med');
+  else if (filter==='crypto') filtered = data.filter(e=>e.cat==='crypto');
+  
+  list.innerHTML = filtered.map(eventHTML).join('') ||
+    '<div class="empty-state"><div class="empty-icon">📭</div><div class="empty-text">无匹配事件</div></div>';
+
+  const sub = document.getElementById('calSub');
+  if (sub) sub.textContent = `共 ${filtered.length} 个事件 · 来源：手动维护 · GitHub 上线后可接入 Investing.com API`;
+}
+
+function filterCal(type, btn) {
+  document.querySelectorAll('#page-calendar .btn').forEach(b => b.classList.remove('btn-primary'));
+  document.querySelectorAll('#page-calendar .btn').forEach(b => b.classList.add('btn-secondary'));
+  btn.classList.remove('btn-secondary');
+  btn.classList.add('btn-primary');
+  renderCalendar(type);
+}
+
+// Mini events in sidebar
+function renderMiniEvents() {
+  const data = buildCalendarData();
+  const wrap = document.getElementById('miniEventsWrap');
+  if (!wrap) return;
+  const upcoming = data.filter(e=>e.impact==='high').slice(0,4);
+  wrap.innerHTML = upcoming.map(ev => {
+    const day = ev.date.getDate();
+    const weekday = ['日','一','二','三','四','五','六'][ev.date.getDay()];
+    const impCls = ev.impact==='high' ? 'color:var(--red);font-weight:700' : 'color:var(--gold)';
+    return `<div style="padding:8px 14px;border-bottom:1px solid var(--bg3);display:flex;gap:10px;align-items:center">
+      <div style="width:32px;text-align:center;font-size:16px;font-weight:800;color:var(--accent);font-family:var(--font-display);flex-shrink:0">${day}<div style="font-size:9px;font-weight:700;color:var(--text4);margin-top:1px">周${weekday}</div></div>
+      <div>
+        <div style="font-size:12px;font-weight:700;color:var(--text)">${sanitizeHTML(ev.title)}</div>
+        <div style="font-size:10px;margin-top:2px;${impCls}">● 高影响</div>
+      </div>
+    </div>`;
+  }).join('') || '<div style="padding:14px;font-size:12px;color:var(--text4)">近期无高影响事件</div>';
 }
 
 // ══════════════════════════════════════════
@@ -1755,16 +2795,16 @@ function buildMorningBrief() {
   const dateStr = now.toLocaleDateString('zh-CN',{year:'numeric',month:'long',day:'numeric',weekday:'long'});
   const fgLabel = fearGreedValue !== null ? `${fearGreedValue} (${fearGreedValue<=25?'极度恐慌':fearGreedValue<=45?'恐慌':fearGreedValue<=55?'中性':fearGreedValue<=75?'贪婪':'极度贪婪'})` : '--';
 
-  const topNewsHTML = allNewsItems.slice(0,8).map((n,i) =>
-    `<li><strong>${n.src}：</strong>${n.title}</li>`
+  const topNewsHTML = allNewsItems.slice(0,10).map(n =>
+    `<li><strong>${sanitizeHTML(n.src)}：</strong>${sanitizeHTML(n.title)}</li>`
   ).join('');
 
-  const {contra, logic, risks, outlook} = buildAnalysis('all');
+  const {contra, logic, risks, chain, outlook} = buildAnalysis('all');
 
   const cryptoRows = cryptoData.slice(0,6).map(c => {
     const chg = c.price_change_percentage_24h||0;
-    const arrow = chg>=0?'▲':'▼';
-    const color = chg>=0?'color:var(--green)':'color:var(--red)';
+    const arrow = chg>=0 ? '▲' : '▼';
+    const color = chg>=0 ? 'color:var(--green)' : 'color:var(--red)';
     return `<div class="report-mini-card">
       <div class="report-mini-label">${SYM[c.id]||c.symbol.toUpperCase()}</div>
       <div class="report-mini-val">$${formatP(c.current_price)}</div>
@@ -1773,27 +2813,28 @@ function buildMorningBrief() {
   }).join('');
 
   const signalTags = [
-    sig.war && '<span style="background:var(--red2);color:var(--red);padding:2px 8px;border-radius:3px;font-size:11px;font-weight:700">⚠ 地缘风险</span>',
-    sig.fed && '<span style="background:var(--blue2);color:var(--blue);padding:2px 8px;border-radius:3px;font-size:11px;font-weight:700">🏦 联储关注</span>',
-    sig.trade && '<span style="background:var(--gold2);color:var(--gold);padding:2px 8px;border-radius:3px;font-size:11px;font-weight:700">📦 贸易摩擦</span>',
-    sig.oil && '<span style="background:#fff8e8;color:#8a5c00;padding:2px 8px;border-radius:3px;font-size:11px;font-weight:700">🛢 油价关注</span>',
-    sig.etf && '<span style="background:var(--purple2);color:var(--purple);padding:2px 8px;border-radius:3px;font-size:11px;font-weight:700">🏛 机构资金</span>',
+    sig.war && '<span style="background:var(--red2);color:var(--red);padding:2px 8px;border-radius:3px;font-size:11px;font-weight:700;font-family:var(--font-mono)">⚠ 地缘风险</span>',
+    sig.fed && '<span style="background:var(--blue2);color:var(--blue);padding:2px 8px;border-radius:3px;font-size:11px;font-weight:700;font-family:var(--font-mono)">🏦 联储关注</span>',
+    sig.trade && '<span style="background:var(--gold2);color:var(--gold);padding:2px 8px;border-radius:3px;font-size:11px;font-weight:700;font-family:var(--font-mono)">📦 贸易摩擦</span>',
+    sig.oil && '<span style="background:#fff8e8;color:#8a5c00;padding:2px 8px;border-radius:3px;font-size:11px;font-weight:700;font-family:var(--font-mono)">🛢 油价关注</span>',
+    sig.etf && '<span style="background:var(--purple2);color:var(--purple);padding:2px 8px;border-radius:3px;font-size:11px;font-weight:700;font-family:var(--font-mono)">🏛 机构资金</span>',
+    sig.china && '<span style="background:#fff8e1;color:#827717;padding:2px 8px;border-radius:3px;font-size:11px;font-weight:700;font-family:var(--font-mono)">🇨🇳 中国因素</span>',
   ].filter(Boolean).join(' ');
 
   return `<div class="report-page">
   <div class="report-header">
     <div class="report-edition">🌅 早餐日报 · Morning Brief</div>
-    <div class="report-headline">全球市场每日情报 · ${dateStr}</div>
-    <div class="report-dateline">数据来源：CoinGecko · Reuters · WSJ · Stooq · Alternative.me · ${now.toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'})} 生成</div>
+    <div class="report-headline">全球市场每日情报</div>
+    <div class="report-dateline">${dateStr} · 数据来源：CoinGecko · Reuters · WSJ · FT · Alternative.me · ${now.toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'})} 生成</div>
     ${signalTags ? `<div style="margin-top:12px;display:flex;gap:6px;flex-wrap:wrap">${signalTags}</div>` : ''}
   </div>
 
   <div class="card">
     <div class="card-body">
       <div class="report-section-title">📊 加密市场快照</div>
-      <div class="report-grid report-grid-3">${cryptoRows}</div>
+      <div class="report-grid report-grid-3">${cryptoRows||'<div style="color:var(--text4)">暂无数据</div>'}</div>
       <div style="display:flex;gap:16px;flex-wrap:wrap;margin-top:10px">
-        <span style="font-size:13px"><strong>市场情绪：</strong><span style="color:var(--accent)">${snap.sentiment}</span></span>
+        <span style="font-size:13px"><strong>市场情绪：</strong><span style="color:var(--accent)">${snap.sentiment||'--'}</span></span>
         <span style="font-size:13px"><strong>恐贪指数：</strong><span style="color:var(--accent)">${fgLabel}</span></span>
         <span style="font-size:13px"><strong>主要涨幅：</strong><span style="color:var(--green)">${snap.ups}/${cryptoData.length} 上涨</span></span>
       </div>
@@ -1808,29 +2849,30 @@ function buildMorningBrief() {
         <div class="analysis-block green-border full"><div class="a-label green">行情逻辑</div><div class="a-text">${logic}</div></div>
         <div class="analysis-block red-border"><div class="a-label red">主要风险</div><div class="a-text">${risks}</div></div>
         <div class="analysis-block blue-border"><div class="a-label blue">今日展望</div><div class="a-text">${outlook}</div></div>
+        <div class="analysis-block cyan-border full"><div class="a-label cyan">链上 / 技术参考</div><div class="a-text">${chain}</div></div>
       </div>
     </div>
   </div>
 
   <div class="card">
     <div class="card-body">
-      <div class="report-section-title">📰 今日要闻 TOP 8</div>
+      <div class="report-section-title">📰 今日要闻 TOP 10</div>
       <ul class="report-bullets">${topNewsHTML||'<li>暂无资讯，请先刷新新闻</li>'}</ul>
     </div>
   </div>
 
   <div class="card">
     <div class="card-body">
-      <div class="report-section-title">𝕏 今日推荐投稿</div>
-      <div style="background:#fff;border:2px solid var(--border2);border-radius:8px;padding:14px 16px;font-size:14px;line-height:1.75;color:var(--text);margin-bottom:10px">
-        ${buildPost('all')}
+      <div class="report-section-title">✍️ 今日推荐投稿（X / 微博）</div>
+      <div style="background:#fff;border:2px solid var(--border2);border-radius:8px;padding:14px 16px;font-size:14px;line-height:1.8;color:var(--text);margin-bottom:6px">
+        ${sanitizeHTML(buildPost('all','x'))}
       </div>
-      <div style="font-size:11px;color:var(--text4)">可直接复制发布至 X（100字以内）</div>
+      <div style="font-size:11px;color:var(--text4);font-family:var(--font-mono)">可直接复制发布至 X（100字以内）· 微博（140字以内）</div>
     </div>
   </div>
 
-  <div style="text-align:center;padding:16px 0;font-size:11px;color:var(--text4);border-top:1px solid var(--border)">
-    MacroKOL 情报站 · 数据仅供参考，不构成投资建议 · ${dateStr}
+  <div style="text-align:center;padding:16px 0;font-size:11px;color:var(--text4);border-top:1px solid var(--border);font-family:var(--font-mono)">
+    MacroHub 情报站 v2 · 数据仅供参考，不构成投资建议 · ${dateStr}
   </div>
 </div>`;
 }
@@ -1842,8 +2884,8 @@ function buildNowReport() {
   const {contra, logic, risks, outlook} = buildAnalysis('all');
   const sig = extractSignals(allNewsItems.slice(0,15).map(n=>n.title));
 
-  const recentNews = allNewsItems.slice(0,6).map(n =>
-    `<li><strong>[${n.src}]</strong> ${n.title}</li>`
+  const recentNews = allNewsItems.slice(0,8).map(n =>
+    `<li><strong>[${sanitizeHTML(n.src)}]</strong> ${sanitizeHTML(n.title)}</li>`
   ).join('');
 
   const hotSignals = [
@@ -1853,11 +2895,13 @@ function buildNowReport() {
     sig.oil && '能源市场波动',
     sig.btcBull && 'BTC 看涨信号',
     sig.btcBear && 'BTC 下行压力',
+    sig.china && '中国因素',
+    sig.etf && '机构资金流入',
   ].filter(Boolean).join(' · ') || '市场情绪中性';
 
   return `<div class="report-page">
   <div class="report-header">
-    <div class="report-edition">⚡ 即时报告 · Snapshot Report</div>
+    <div class="report-edition">⚡ 即时快报 · Snapshot Report</div>
     <div class="report-headline">当前市场状态总结</div>
     <div class="report-dateline">生成时间：${timeStr} · 数据实时</div>
     <div style="margin-top:10px;font-size:13px;color:#c8bfb0">📡 当前热点信号：${hotSignals}</div>
@@ -1866,10 +2910,7 @@ function buildNowReport() {
   <div class="card">
     <div class="card-body">
       <div class="report-section-title">📌 即时摘要</div>
-      <div class="report-body">
-        <p>${contra}</p>
-        <p>${logic}</p>
-      </div>
+      <div class="report-body"><p>${contra}</p><p>${logic}</p></div>
     </div>
   </div>
 
@@ -1885,27 +2926,20 @@ function buildNowReport() {
 
   <div class="card">
     <div class="card-body">
-      <div class="report-section-title">📰 最近 6 条要闻</div>
+      <div class="report-section-title">📰 最近 8 条要闻</div>
       <ul class="report-bullets">${recentNews||'<li>暂无资讯，请先刷新</li>'}</ul>
     </div>
   </div>
 
-  <div class="card">
-    <div class="card-body">
-      <div class="report-section-title">𝕏 本刻推荐投稿</div>
-      <div style="background:#fff;border:2px solid var(--border2);border-radius:8px;padding:14px;font-size:14px;line-height:1.75">${buildPost('all')}</div>
-    </div>
-  </div>
-
-  <div style="text-align:center;padding:16px 0;font-size:11px;color:var(--text4);border-top:1px solid var(--border)">
-    MacroKOL · ${timeStr} · 仅供参考，不构成投资建议
+  <div style="text-align:center;padding:14px 0;font-size:11px;color:var(--text4);border-top:1px solid var(--border);font-family:var(--font-mono)">
+    MacroHub v2 · ${timeStr} · 仅供参考，不构成投资建议
   </div>
 </div>`;
 }
 
 async function generateMorningBrief() {
   const el = document.getElementById('reportContent');
-  el.innerHTML = '<div class="loading-row" style="padding:40px 20px;justify-content:center"><div class="spinner"></div> 正在生成早餐日报...</div>';
+  el.innerHTML = '<div class="loading-row" style="padding:40px;justify-content:center"><div class="spinner"></div> 正在生成早餐日报...</div>';
   await new Promise(r => setTimeout(r, 800));
   el.innerHTML = buildMorningBrief();
   showToast('✅ 早餐日报已生成');
@@ -1913,15 +2947,78 @@ async function generateMorningBrief() {
 
 async function generateNowReport() {
   const el = document.getElementById('reportContent');
-  el.innerHTML = '<div class="loading-row" style="padding:40px 20px;justify-content:center"><div class="spinner"></div> 正在生成即时报告...</div>';
+  el.innerHTML = '<div class="loading-row" style="padding:40px;justify-content:center"><div class="spinner"></div> 正在生成即时快报...</div>';
   await new Promise(r => setTimeout(r, 500));
   el.innerHTML = buildNowReport();
-  showToast('✅ 即时报告已生成');
+  showToast('✅ 即时快报已生成');
 }
 
-function printReport() {
-  window.print();
+async function generateAIReport() {
+  const el = document.getElementById('reportContent');
+  el.innerHTML = '<div class="loading-row" style="padding:40px;justify-content:center"><div class="spinner"></div> AI 正在生成深度报告...</div>';
+
+  if (CONFIG.ANTHROPIC_API_KEY) {
+    try {
+      const snap = getSnap();
+      const headlines = allNewsItems.slice(0,20).map(n=>`[${n.src}] ${n.title}`).join('\n');
+      const btcInfo = snap.btcPrice ? `BTC $${snap.btcPrice}(${snap.btcChg}%), ETH $${snap.ethPrice}(${snap.ethChg}%), 恐贪指数${fearGreedValue||'--'}, 市场${snap.sentiment}` : '';
+
+      const result = await callClaudeAPI(
+        `你是顶级宏观分析师，为投资者生成今日深度市场报告（800字以内，结构化输出）。
+
+当前数据：${btcInfo}
+重要资讯：
+${headlines}
+
+输出格式（用 ## 分节）：
+## 今日核心叙事
+## 多空博弈分析
+## 重要风险事项（①②③）
+## 短期操作展望
+## 今日关键数据待发布
+## 给 KOL 的投稿参考（一条100字以内）`,
+        1200
+      );
+
+      const now = new Date();
+      el.innerHTML = `<div class="report-page">
+        <div class="report-header">
+          <div class="report-edition">✨ AI 深度报告 · Claude Powered</div>
+          <div class="report-headline">宏观市场每日深度分析</div>
+          <div class="report-dateline">${now.toLocaleDateString('zh-CN',{year:'numeric',month:'long',day:'numeric'})} · 由 Claude AI 生成</div>
+        </div>
+        <div class="card">
+          <div class="card-body">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">
+              <span class="ai-badge">✨ Claude AI 生成</span>
+              <span style="font-size:11px;color:var(--text4);font-family:var(--font-mono)">${now.toLocaleTimeString('zh-CN')}</span>
+            </div>
+            <div style="font-size:14px;line-height:1.9;color:var(--text2);white-space:pre-line">${sanitizeHTML(result)}</div>
+            <div style="margin-top:14px;font-size:10px;color:var(--text4);font-family:var(--font-mono)">由 Claude AI 生成 · 仅供参考，不构成投资建议</div>
+          </div>
+        </div>
+      </div>`;
+      showToast('✨ AI 深度报告已生成');
+    } catch(e) {
+      await generateMorningBrief();
+      showToast('⚠ AI 报告失败，已生成本地早报');
+    }
+  } else {
+    el.innerHTML = `<div class="card"><div class="card-body">
+      <div class="empty-state">
+        <div class="empty-icon">✨</div>
+        <div class="empty-text">
+          <strong>AI 深度报告需要配置 Anthropic API Key</strong><br><br>
+          在代码顶部 CONFIG.ANTHROPIC_API_KEY 中填入您的 Key，<br>
+          或部署到 GitHub 后通过 Cloudflare Worker 代理配置。<br><br>
+          <button class="btn btn-primary" onclick="generateMorningBrief()">生成本地早报</button>
+        </div>
+      </div>
+    </div></div>`;
+  }
 }
+
+function printReport() { window.print(); }
 
 // ══════════════════════════════════════════
 // REFRESH ALL
@@ -1931,8 +3028,9 @@ async function refreshAll() {
   document.getElementById('statusText').textContent = '正在更新...';
   await Promise.allSettled([fetchCrypto(), fetchFearGreed(), fetchStocks(), fetchCommodities(), fetchNews()]);
   _dataLoaded = true;
-  document.getElementById('statusText').textContent = '数据来源：CoinGecko · Stooq · Alternative.me · Reuters · WSJ · Investing.com';
+  document.getElementById('statusText').textContent = `CoinGecko · Reuters · WSJ · FT · CoinDesk · Alternative.me · ${RSS_SOURCES.length} 来源`;
   document.getElementById('lastUpdate').textContent = '更新于 ' + new Date().toLocaleTimeString('zh-CN');
+  renderMiniEvents();
   showToast('✅ 全部数据已更新');
 }
 
@@ -1941,21 +3039,224 @@ async function refreshAll() {
 // ══════════════════════════════════════════
 async function init() {
   renderStyleExamples();
+  renderMiniEvents();
+  updateOpenBtn();
+
+  // Fetch priority data
   await Promise.allSettled([fetchCrypto(), fetchFearGreed(), fetchNews()]);
   _dataLoaded = true;
-  document.getElementById('statusText').textContent = 'CoinGecko · Reuters · WSJ · Investing.com · Alternative.me';
+
+  document.getElementById('statusText').textContent = `CoinGecko · ${RSS_SOURCES.length} RSS 来源 · Alternative.me`;
   document.getElementById('lastUpdate').textContent = '更新于 ' + new Date().toLocaleTimeString('zh-CN');
-  // Fetch slower data
+
+  // Background fetch
   fetchStocks().catch(()=>{});
   fetchCommodities().catch(()=>{});
+
+  // Auto generate analysis once data loads
+  setTimeout(() => generateAnalysis(), 2000);
 }
+
+
+// ══════════════════════════════════════════
+// EMOJI PICKER
+// ══════════════════════════════════════════
+const EMOJI_CATS = [
+  {
+    label: '💰 财经', emojis: [
+      '📈','📉','📊','💹','💰','💵','💴','💶','💷','🪙',
+      '🏦','🏛️','💳','🤑','💸','🏧','💲','📋','📑','🧾',
+      '⚖️','🔑','🏆','🥇','🎯','🔥','⚡','💡','🚀','🌕',
+      '₿','🪙','⛓️','🔗','🌐','🌍','🌏','🌎','🗺️','📡',
+    ]
+  },
+  {
+    label: '😊 表情', emojis: [
+      '😀','😃','😄','😁','😆','😅','🤣','😂','🙂','😊',
+      '😇','🥰','😍','🤩','😘','😋','😎','🤓','🧐','😏',
+      '😒','😞','😔','😟','😕','🙁','😣','😖','😫','😩',
+      '🥺','😢','😭','😤','😠','😡','🤬','🤯','😳','🥵',
+      '😱','😨','😰','😥','😓','🤗','🤔','🤭','🤫','🤥',
+      '😶','😐','😑','😬','🙄','😯','😦','😧','😮','😲',
+    ]
+  },
+  {
+    label: '👍 手势', emojis: [
+      '👍','👎','👌','✌️','🤞','🤟','🤘','🤙','👈','👉',
+      '👆','👇','☝️','✋','🤚','🖐️','🖖','👋','🤝','🙏',
+      '✍️','💪','🦾','🦿','🖊️','📝','✏️','🔍','🔎','👀',
+    ]
+  },
+  {
+    label: '⚠️ 信号', emojis: [
+      '⚠️','🚨','🔴','🟡','🟢','🔵','⭕','❌','✅','❗',
+      '❓','💯','🆙','🆒','🆕','🆓','🔔','🔕','📣','📢',
+      '🚀','🛑','⛔','🚫','🔒','🔓','🔑','🗝️','⚡','💥',
+      '🌊','🌪️','🔥','❄️','🌡️','⏰','⏱️','⌛','⏳','📅',
+    ]
+  },
+  {
+    label: '🌍 地缘', emojis: [
+      '🌍','🌎','🌏','🗺️','🌐','🏳️','🏴','🏁','🚩','🎌',
+      '🇺🇸','🇨🇳','🇬🇧','🇪🇺','🇯🇵','🇩🇪','🇫🇷','🇰🇷','🇷🇺','🇸🇦',
+      '🇮🇳','🇧🇷','🇨🇦','🇦🇺','🇸🇬','🇲🇾','🇭🇰','🇹🇼','🇮🇱','🇮🇷',
+      '⚔️','🛡️','✈️','🚢','🛢️','⚓','🪖','🏗️','🏙️','🌆',
+    ]
+  },
+  {
+    label: '📊 市场', emojis: [
+      '📈','📉','📊','🔺','🔻','▲','▼','➡️','⬅️','↗️',
+      '↘️','↙️','↖️','🔄','🔁','♻️','💱','💲','🏷️','🧮',
+      '📌','📍','🗂️','📁','📂','🗃️','📦','📫','📬','📭',
+      '🧩','🎲','🎰','🎯','🏅','🥈','🥉','🏆','🎖️','🎗️',
+    ]
+  },
+];
+
+let _emojiTargetId = '';
+let _emojiPanelId = '';
+let _emojiCatIndex = 0;
+let _emojiSearch = '';
+
+function buildEmojiPanelHTML(panelId, targetId, catIndex=0, search='') {
+  const cat = EMOJI_CATS[catIndex];
+  const allEmojis = search
+    ? EMOJI_CATS.flatMap(c => c.emojis).filter(e => {
+        // basic search: match by unicode name if we have it, else just show all
+        return true;
+      }).filter((e,i) => i < 48)
+    : cat.emojis;
+
+  const tabs = EMOJI_CATS.map((c,i) => 
+    `<button class="ep-tab ${i===catIndex&&!search?'active':''}" onclick="switchEmojiCat('${panelId}','${targetId}',${i})">${c.label.split(' ')[0]}</button>`
+  ).join('');
+
+  const grid = allEmojis.map(e =>
+    `<button class="ep-emoji" onclick="insertEmoji('${targetId}','${e}','${panelId}')" title="${e}">${e}</button>`
+  ).join('');
+
+  return `
+    <input class="ep-search" type="text" placeholder="🔍 搜索 emoji..." value="${search}" 
+      oninput="searchEmoji('${panelId}','${targetId}',this.value)">
+    <div class="emoji-panel-tabs">${tabs}</div>
+    <div class="emoji-grid">${grid}</div>
+  `;
+}
+
+function toggleEmojiPanel(panelId, targetId) {
+  const panel = document.getElementById(panelId);
+  if (!panel) return;
+  const isOpen = panel.classList.contains('open');
+
+  // Close all other panels first
+  document.querySelectorAll('.emoji-panel.open').forEach(p => {
+    p.classList.remove('open');
+    p.innerHTML = '';
+  });
+
+  if (!isOpen) {
+    _emojiTargetId = targetId;
+    _emojiPanelId = panelId;
+    _emojiCatIndex = 0;
+    _emojiSearch = '';
+    panel.innerHTML = buildEmojiPanelHTML(panelId, targetId, 0, '');
+    panel.classList.add('open');
+
+    // Close on outside click
+    setTimeout(() => {
+      document.addEventListener('click', closeEmojiOnOutside, {once: false});
+    }, 10);
+  }
+}
+
+function closeEmojiOnOutside(e) {
+  const openPanels = document.querySelectorAll('.emoji-panel.open');
+  if (!openPanels.length) {
+    document.removeEventListener('click', closeEmojiOnOutside);
+    return;
+  }
+  let clickedInside = false;
+  openPanels.forEach(p => {
+    if (p.contains(e.target)) clickedInside = true;
+    if (e.target.closest('.emoji-picker-wrap')) clickedInside = true;
+  });
+  if (!clickedInside) {
+    openPanels.forEach(p => { p.classList.remove('open'); p.innerHTML = ''; });
+    document.removeEventListener('click', closeEmojiOnOutside);
+  }
+}
+
+function switchEmojiCat(panelId, targetId, catIndex) {
+  _emojiCatIndex = catIndex;
+  _emojiSearch = '';
+  const panel = document.getElementById(panelId);
+  if (panel) panel.innerHTML = buildEmojiPanelHTML(panelId, targetId, catIndex, '');
+}
+
+function searchEmoji(panelId, targetId, query) {
+  _emojiSearch = query;
+  const panel = document.getElementById(panelId);
+  if (!panel) return;
+  if (!query.trim()) {
+    panel.innerHTML = buildEmojiPanelHTML(panelId, targetId, _emojiCatIndex, '');
+    return;
+  }
+  // Show all emojis when searching (simple: just show first 48 from all cats)
+  const allEmojis = EMOJI_CATS.flatMap(c => c.emojis);
+  const grid = allEmojis.map(e =>
+    `<button class="ep-emoji" onclick="insertEmoji('${targetId}','${e}','${panelId}')">${e}</button>`
+  ).join('');
+  const existing = panel.querySelector('.emoji-grid');
+  if (existing) existing.innerHTML = allEmojis.map(e =>
+    `<button class="ep-emoji" onclick="insertEmoji('${targetId}','${e}','${panelId}')">${e}</button>`
+  ).join('');
+}
+
+function insertEmoji(targetId, emoji, panelId) {
+  const el = document.getElementById(targetId);
+  if (!el) return;
+
+  // Remove placeholder if empty
+  if (el.classList.contains('empty')) {
+    el.textContent = '';
+    el.classList.remove('empty');
+  }
+
+  // Insert at cursor position (contenteditable)
+  el.focus();
+  const sel = window.getSelection();
+  if (sel && sel.rangeCount > 0 && el.contains(sel.anchorNode)) {
+    const range = sel.getRangeAt(0);
+    range.deleteContents();
+    const textNode = document.createTextNode(emoji);
+    range.insertNode(textNode);
+    range.setStartAfter(textNode);
+    range.collapse(true);
+    sel.removeAllRanges();
+    sel.addRange(range);
+  } else {
+    // Fallback: append to end
+    el.textContent = el.textContent + emoji;
+    // Move cursor to end
+    const range = document.createRange();
+    range.selectNodeContents(el);
+    range.collapse(false);
+    sel.removeAllRanges();
+    sel.addRange(range);
+  }
+
+  // Update char count
+  if (targetId === 'xpostText') updateCharCount('xpostText','charCount');
+  if (targetId === 'xpostText2') updateCharCount('xpostText2','charCount2');
+}
+
+// Close emoji panels on page switch — handled inside showPage above
 
 init();
 
-// Auto-refresh crypto + F&G every 3 minutes
-setInterval(() => { fetchCrypto().catch(()=>{}); fetchFearGreed().catch(()=>{}); }, 3 * 60 * 1000);
-// News every 10 minutes
-setInterval(() => { fetchNews().catch(()=>{}); }, 10 * 60 * 1000);
+// Auto-refresh intervals
+setInterval(() => { fetchCrypto().catch(()=>{}); fetchFearGreed().catch(()=>{}); }, CONFIG.CRYPTO_INTERVAL);
+setInterval(() => { fetchNews().catch(()=>{}); }, CONFIG.NEWS_INTERVAL);
 </script>
 </body>
 </html>
